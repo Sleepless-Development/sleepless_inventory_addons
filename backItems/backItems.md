@@ -18,7 +18,7 @@ The following configuration variables are defined:
 
   - `model` (required for non-weapon models): Specifies the model of the non-weapon item. It should be the hash value of the model.
 
-  - `hash` (required for weapon models): Specifies the hash value of the weapon model.
+  - `hash` (required for weapons): Specifies the hash value of the weapon.
 
   - `isWeapon`: Indicates whether the item is a weapon (boolean value).
 
