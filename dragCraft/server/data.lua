@@ -1,4 +1,4 @@
-RECIPES = { --create new item craft Recipies here. limited to 2 items per craft, but you can have multiple of each of those 2 items if desired
+RECIPES = { --create new item craft Recipies here. limited to 2 items per craft
 
     ['garbage'] = { --item1
         otherItem = 'scrapmetal', --item2
