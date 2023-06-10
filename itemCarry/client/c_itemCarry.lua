@@ -1,5 +1,14 @@
 local currentCarryObject = nil
 
+local function onLoad()
+    LocalPlayer.state:set('carryItem', nil, true)
+    TriggerServerEvent("carryItem:loadForSpawn")
+end
+
+AddEventHandler('esx:playerLoaded', onLoad)
+AddEventHandler('QBCore:Client:OnPlayerLoaded', onLoad)
+AddEventHandler('ox:playerLoaded', onLoad)
+
 AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unused, replicated)
 
     local ply = GetPlayerFromStateBagName(bagName)

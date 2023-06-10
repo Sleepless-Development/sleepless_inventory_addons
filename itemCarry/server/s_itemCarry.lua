@@ -53,3 +53,30 @@ local createCarryHook = ox_inventory:registerHook('createItem', function(payload
     end
 
 end, {})
+
+local function findCarryItem(source)
+    CreateThread(function ()
+        Wait(500) --wait for inventory to update after whatever hook
+        local playerState = Player(source).state
+        local playerItems = exports.ox_inventory:GetInventoryItems(source)
+        local carryData = nil
+
+        for i = 1, #playerItems do
+            local itemData = playerItems[i]
+            if CARRY_ITEMS[itemData.name] then
+                carryData = CARRY_ITEMS[itemData.name]
+                break
+            end
+        end
+
+
+        plyState:set("carryItem", carryData, true)
+
+    end)
+end
+
+
+RegisterNetEvent("carryItem:loadForSpawn", function()
+    local source = source
+    findCarryItem(source)
+end)

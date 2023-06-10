@@ -19,20 +19,15 @@ local function purgeAllBackItems()
     end
 end
 
-AddEventHandler('esx:playerLoaded',function()
-    LocalPlayer.state:set('backItems', BACK_ITEM_SLOTS_DEFAULT, true)
-    TriggerServerEvent("backItems:loadForSpawn")
-end)
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+local function onLoad()
     LocalPlayer.state:set('backItems', BACK_ITEM_SLOTS_DEFAULT, true)
     TriggerServerEvent("backItems:loadForSpawn")
-end)
+end
 
-AddEventHandler('ox:playerLoaded', function()
-    LocalPlayer.state:set('backItems', BACK_ITEM_SLOTS_DEFAULT, true)
-    TriggerServerEvent("backItems:loadForSpawn")
-end)
+AddEventHandler('esx:playerLoaded', onLoad)
+AddEventHandler('QBCore:Client:OnPlayerLoaded', onLoad)
+AddEventHandler('ox:playerLoaded', onLoad)
 
 AddEventHandler('onResourceStop', function(resourceName)
     if resourceName == GetCurrentResourceName() then
@@ -57,7 +52,6 @@ local function createWeapon(serverId, i)
 
     SetEntityCollision(playerBackSlots[serverId][i].obj, false, false)
     RequestWeaponHighDetailModel(playerBackSlots[serverId][i].obj)
-    SetEntityDrawOutline(playerBackSlots[serverId][i].obj, true)
 end
 
 local function createObject(serverId, i)
@@ -68,7 +62,6 @@ local function createObject(serverId, i)
     playerBackSlots[serverId][i].obj = CreateObject(model, 1.0, 1.0, 1.0, false, false, false)
 
     SetEntityCollision(playerBackSlots[serverId][i].obj, false, false)
-    SetEntityDrawOutline(playerBackSlots[serverId][i].obj, true)
 end
 
 -- Function to handle weapon components
