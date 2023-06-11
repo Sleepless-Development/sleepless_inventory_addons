@@ -5,9 +5,9 @@ local function onLoad()
     TriggerServerEvent("carryItem:loadForSpawn")
 end
 
-AddEventHandler('esx:playerLoaded', onLoad)
-AddEventHandler('QBCore:Client:OnPlayerLoaded', onLoad)
-AddEventHandler('ox:playerLoaded', onLoad)
+RegisterNetEvent('esx:playerLoaded', onLoad)
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', onLoad)
+RegisterNetEvent('ox:playerLoaded', onLoad)
 
 AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unused, replicated)
 

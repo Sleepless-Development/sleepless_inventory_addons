@@ -25,9 +25,9 @@ local function onLoad()
     TriggerServerEvent("backItems:loadForSpawn")
 end
 
-AddEventHandler('esx:playerLoaded', onLoad)
-AddEventHandler('QBCore:Client:OnPlayerLoaded', onLoad)
-AddEventHandler('ox:playerLoaded', onLoad)
+RegisterNetEvent('esx:playerLoaded', onLoad)
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', onLoad)
+RegisterNetEvent('ox:playerLoaded', onLoad)
 
 AddEventHandler('onResourceStop', function(resourceName)
     if resourceName == GetCurrentResourceName() then
