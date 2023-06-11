@@ -4,17 +4,18 @@ local playerBackSlots = {}
 local inventoryItems = exports.ox_inventory:Items()
 
 -- Function to delete weapon entities and reset backData
-local function deleteBackItems(playerWeapons)
-    for i = 1, #playerWeapons do
-        DeleteEntity(playerWeapons[i].obj)
-        playerWeapons[i] = BACK_ITEM_SLOTS_DEFAULT[i] or nil
+local function deleteBackItems(serverId)
+    for i = 1, #playerBackSlots[serverId] do
+        DeleteEntity(playerBackSlots[serverId][i].obj)
+        playerBackSlots[serverId][i].obj = nil
+        playerBackSlots[serverId][i] = BACK_ITEM_SLOTS_DEFAULT[i] and lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT[i]) or nil
     end
 end
 
 local function purgeAllBackItems()
-    for _, weapons in pairs(playerBackSlots) do
+    for serverId, weapons in pairs(playerBackSlots) do
         if weapons then
-            deleteBackItems(weapons)
+            deleteBackItems(serverId)
         end
     end
 end
@@ -114,7 +115,7 @@ end
 -- Thread to handle periodic operations
 CreateThread(function()
     while true do
-        Wait(1000)
+        Wait(0)
         for serverId, backItems in pairs(playerBackSlots) do
             for i = 1, #backItems do
                 local backItem = backItems[i]?.obj
@@ -158,7 +159,9 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
         playerBackSlots[serverId] = lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT)
     end
 
-    deleteBackItems(playerBackSlots[serverId])
+    deleteBackItems(serverId)
+
+
 
     for i = 1, #newSlotsData do
 
@@ -180,6 +183,7 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
             elseif slotData.backData.model then
                 createObject(serverId, i)
             end
+            SetEntityDrawOutline(playerBackSlots[serverId][i].obj, true)
             attachItemToPlayer(serverId, i, plyPed)
         else
             if playerBackSlots[serverId][i].obj then
