@@ -211,6 +211,7 @@ end)
 
     for i = 1, #playerBackSlots[serverId] do
         local backSlot = playerBackSlots[serverId][i]
+        local plyState = LocalPlayer.state
         if backSlot?.backData?.slot == lastSlot then
             SetEntityVisible(backSlot.obj, visible, false)
             plyState:set("backItemEquipped", {toggle = visible, slot = i}, true)
