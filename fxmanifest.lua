@@ -10,7 +10,6 @@ shared_scripts {
 }
 
 server_scripts {
-	'@ox_core/imports/server.lua',
 	'**/server/*.lua',
 }
 
