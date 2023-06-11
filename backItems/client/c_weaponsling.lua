@@ -148,6 +148,12 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
     local plyPed = GetPlayerPed(ply)
     local serverId = GetPlayerServerId(ply)
 
+    while plyPed == 0 or not HasCollisionLoadedAroundEntity(plyPed) do
+        Wait(0)
+        plyPed = GetPlayerPed(ply)
+        if not DoesEntityExist(plyPed) then return end
+    end
+
     if not playerBackSlots[serverId] then
         playerBackSlots[serverId] = lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT)
     end
