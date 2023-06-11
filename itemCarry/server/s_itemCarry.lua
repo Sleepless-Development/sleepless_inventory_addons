@@ -70,7 +70,7 @@ local function findCarryItem(source)
         end
 
 
-        plyState:set("carryItem", carryData, true)
+        playerState:set("carryItem", carryData, true)
 
     end)
 end
