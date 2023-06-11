@@ -141,8 +141,6 @@ end)
 -- Handler for state bag change
 AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, _unused, replicated)
 
-    print(json.encode(newSlotsData, {indent = true}))
-
     local ply = GetPlayerFromStateBagName(bagName)
 
     if not ply then return end
