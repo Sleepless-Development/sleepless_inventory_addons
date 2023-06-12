@@ -24,7 +24,7 @@ CARRY_ITEMS = {
 }
 ```
 
-- `item_name`: The name of the inventory item. This will be used as the key in the `CARRY_ITEMS` table.
+- `item_name`: The name of the inventory item. This will be used as the key in the `CARRY_ITEMS` table. NOTE: CARRY ITEMS SHOULD NOT STACK
 - `animation_dictionary`: The name of the animation dictionary associated with the item.
 - `animation_flag?`: The animation flag value for the item. This determines the behavior of the item when carried.
 - `bone_id`: The bone ID on the player's character model where the prop will be attached.
@@ -69,4 +69,4 @@ CARRY_ITEMS = {
 }
 ```
 
-Ensure that the new entry is added within the existing `CARRY_ITEMS` table in itemCarry/server/data, maintaining the comma separation between entries.
+Ensure that the new entry is added within the existing `CARRY_ITEMS` table in `itemCarry/server/data`, maintaining the comma separation between entries.
