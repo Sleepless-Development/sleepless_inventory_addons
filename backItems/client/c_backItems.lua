@@ -183,7 +183,6 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
             elseif slotData.backData.model then
                 createObject(serverId, i)
             end
-            SetEntityDrawOutline(playerBackSlots[serverId][i].obj, true)
             attachItemToPlayer(serverId, i, plyPed)
         else
             if playerBackSlots[serverId][i].obj then
