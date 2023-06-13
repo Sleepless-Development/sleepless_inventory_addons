@@ -133,8 +133,11 @@ CreateThread(function()
     end
 end)
 
-AddStateBagChangeHandler("backItemEquipped", nil, function(bagName, key, data, _unused, replicated)
+AddStateBagChangeHandler("backItemVisible", nil, function(bagName, key, data, _unused, replicated)
     local ply = GetPlayerFromStateBagName(bagName)
+
+    if ply < 1 then return end
+
     local serverId = GetPlayerServerId(ply)
     local slotData = playerBackSlots[serverId]?[data.slot]
     local object = slotData?.obj
@@ -208,7 +211,7 @@ end)
          local plyState = LocalPlayer.state
          if backSlot?.backData?.slot == lastSlot then
              SetEntityVisible(backSlot.obj, visible, false)
-             plyState:set("backItemEquipped", {toggle = visible, slot = i}, true)
+             plyState:set("backItemVisible", {toggle = visible, slot = i}, true)
              return
          end
      end
@@ -223,7 +226,7 @@ end)
         local backSlot = playerBackSlots[serverId][i]
         local plyState = LocalPlayer.state
         SetEntityVisible(backSlot.obj, visible, false)
-        plyState:set("backItemEquipped", {toggle = visible, slot = i}, true)
+        plyState:set("backItemVisible", {toggle = visible, slot = i}, true)
     end
 end
 
