@@ -63,7 +63,7 @@ local function findCarryItem(source)
 
         for i = 1, #playerItems do
             local itemData = playerItems[i]
-            if CARRY_ITEMS[itemData.name] then
+            if itemData and CARRY_ITEMS[itemData.name] then
                 carryData = CARRY_ITEMS[itemData.name]
                 break
             end
