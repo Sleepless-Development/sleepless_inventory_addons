@@ -17,6 +17,11 @@ BACK_ITEMS  = {
         isWeapon = true,
         hash = joaat('WEAPON_COMPACTRIFLE'),
     },
+    ['WEAPON_MG'] = {
+        prio = 4,
+        isWeapon = true,
+        hash = joaat('WEAPON_MG'),
+    },
     ['WEAPON_BAT'] = {
         prio = 1,
         isWeapon = true,

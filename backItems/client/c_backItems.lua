@@ -120,8 +120,9 @@ CreateThread(function()
             for i = 1, #backItems do
                 local backItem = backItems[i]?.obj
                 if backItem then
-                    local targetPed = GetPlayerPed(GetPlayerFromServerId(serverId))
-                    if targetPed then
+                    local player = GetPlayerFromServerId(serverId)
+                    local targetPed = GetPlayerPed(player)
+                    if targetPed and player > 0 then
                         if not IsEntityAttachedToEntity(backItem, targetPed) then
                             attachItemToPlayer(serverId, i, targetPed)
                         end
@@ -160,8 +161,6 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
     end
 
     deleteBackItems(serverId)
-
-
 
     for i = 1, #newSlotsData do
 
