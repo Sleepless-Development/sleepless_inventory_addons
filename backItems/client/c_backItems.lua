@@ -136,6 +136,10 @@ end)
 AddStateBagChangeHandler("backItemEquipped", nil, function(bagName, key, data, _unused, replicated)
     local ply = GetPlayerFromStateBagName(bagName)
     local serverId = GetPlayerServerId(ply)
+    local slotData = playerBackSlots[serverId]?[data.slot]
+    local object = slotData?.obj
+
+    if not object then return end
 
     SetEntityVisible(playerBackSlots[serverId][data.slot].obj, data.toggle, false)
 end)
