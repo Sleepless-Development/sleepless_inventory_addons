@@ -20,7 +20,7 @@ local function purgeAllBackItems()
     end
 end
 
-
+-- Function to handle backItems on player load
 local function onLoad()
     LocalPlayer.state:set('backItems', BACK_ITEM_SLOTS_DEFAULT, true)
     TriggerServerEvent("backItems:loadForSpawn")
@@ -218,10 +218,8 @@ end)
     for i = 1, #playerBackSlots[serverId] do
         local backSlot = playerBackSlots[serverId][i]
         local plyState = LocalPlayer.state
-        if backSlot?.backData?.slot == lastSlot then
-            SetEntityVisible(backSlot.obj, visible, false)
-            plyState:set("backItemEquipped", {toggle = visible, slot = i}, true)
-        end
+        SetEntityVisible(backSlot.obj, visible, false)
+        plyState:set("backItemEquipped", {toggle = visible, slot = i}, true)
     end
 end
 
@@ -236,6 +234,7 @@ end)
 
 lib.onCache("vehicle", function (vehicle)
     if vehicle then
+        if IsThisModelABike(GetEntityModel(vehicle)) then return end
         setAllBackItemsVisible(false)
     else
         setAllBackItemsVisible(true)
