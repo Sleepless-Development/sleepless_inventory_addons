@@ -126,8 +126,6 @@ CreateThread(function()
                         if not IsEntityAttachedToEntity(backItem, targetPed) then
                             attachItemToPlayer(serverId, i, targetPed)
                         end
-                    else
-                        deleteBackItems(serverId)
                     end
                 end
             end
@@ -251,3 +249,14 @@ lib.onCache("vehicle", function (vehicle)
 end)
 
 exports("setAllBackItemsVisible", setAllBackItemsVisible)
+
+
+RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
+    if not playerBackSlots[serverId] then return end
+
+    for i = 1, #playerBackSlots[serverId] do
+        local backSlot = playerBackSlots[serverId][i]
+        DeleteEntity(backSlot.obj)
+    end
+    playerBackSlots[serverId] = nil
+end)

@@ -70,6 +70,11 @@ RegisterNetEvent("backItems:loadForSpawn", function()
 
 end)
 
+AddEventHandler("playerDropped", function()
+	local source = source
+    TriggerClientEvent("backItems:RemoveItemsOnDropped", -1, source)
+end)
+
 
 
 local createSlingHook = ox_inventory:registerHook('createItem', function(payload)
