@@ -115,17 +115,19 @@ end
 -- Thread to handle periodic operations
 CreateThread(function()
     while true do
-        Wait(0)
+        Wait(1000)
         for serverId, backItems in pairs(playerBackSlots) do
             for i = 1, #backItems do
                 local backItem = backItems[i]?.obj
                 if backItem then
                     local player = GetPlayerFromServerId(serverId)
                     local targetPed = GetPlayerPed(player)
-                    if targetPed and player > 0 then
+                    if targetPed and DoesEntityExist(targetPed) and player > 0 then
                         if not IsEntityAttachedToEntity(backItem, targetPed) then
                             attachItemToPlayer(serverId, i, targetPed)
                         end
+                    else
+                        deleteBackItems(serverId)
                     end
                 end
             end
