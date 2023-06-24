@@ -9,36 +9,30 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
     if type(fromSlot) == "table" and type(toSlot) == "table" then
         if fromSlot.name == toSlot.name then return end
 
-        local item1 = (RECIPES[fromSlot.name] and fromSlot) or (RECIPES[toSlot.name] and toSlot)
-        if not item1 then return end
+        local recipeIndex = (RECIPES[fromSlot.name .. " " .. toSlot.name] and fromSlot.name .. " " .. toSlot.name) or (RECIPES[toSlot.name .. " " .. fromSlot.name] and toSlot.name .. " " .. fromSlot.name) or nil
 
-        local amount1 = RECIPES[item1.name].costs[item1.name].need
-        if amount1 > ox_inventory:GetItem(data.source, item1.name, nil, true) then
-            local description = ("Not enough %s. Need %d"):format(item1.label, RECIPES[item1.name].costs[item1.name])
+        if not recipeIndex then return end
+
+        local recipe = RECIPES[recipeIndex]
+
+        local amount1 = recipe.costs[fromSlot.name].need
+        if amount1 > ox_inventory:GetItem(data.source, fromSlot.name, nil, true) then
+            local description = ("Not enough %s. Need %d"):format(fromSlot.label, recipe.costs[fromSlot.name])
             TriggerClientEvent('ox_lib:notify', data.source, { type = 'error', description = description })
             return false
         end
 
-        local otherItem = RECIPES[item1.name].otherItem
-        local item2 = (otherItem == fromSlot.name and fromSlot) or (otherItem == toSlot.name and toSlot)
-        if not item2 then return end
-
-        local amount2 = RECIPES[item1.name].costs[item2.name].need
-        if amount2 > ox_inventory:GetItem(data.source, item2.name, nil, true) then
-            local description = ("Not enough %s. Need %d"):format(item2.label, RECIPES[item1.name].costs[item2.name])
+        local amount2 = recipe.costs[toSlot.name].need
+        if amount2 > ox_inventory:GetItem(data.source, toSlot.name, nil, true) then
+            local description = ("Not enough %s. Need %d"):format(toSlot.label, recipe.costs[toSlot.name])
             TriggerClientEvent('ox_lib:notify', data.source, { type = 'error', description = description })
             return false
         end
-
-        local duration = RECIPES[item1.name].duration
-        TriggerClientEvent('demi-dragCraft:Craft', data.source, duration)
-
-        local resultItems = RECIPES[item1.name].result
 
         local resultForQueue = {}
 
-        for i = 1, #resultItems do
-            local resultData = resultItems[i]
+        for i = 1, #recipe.result do
+            local resultData = recipe.result[i]
             resultForQueue[i] = {
                 name = resultData.name,
                 amount = resultData.amount
@@ -47,17 +41,19 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
 
         CraftQueue[data.source] = {
             item1 = {
-                name = item1.name,
+                name = fromSlot.name,
                 amount = amount1,
-                remove = RECIPES[item1.name].costs[item1.name].remove
+                remove = recipe.costs[fromSlot.name].remove
             },
             item2 = {
-                name = item2.name,
+                name = toSlot.name,
                 amount = amount2,
-                remove = RECIPES[item1.name].costs[item2.name].remove
+                remove = recipe.costs[toSlot.name].remove
             },
             result = resultForQueue
         }
+
+        TriggerClientEvent('demi-dragCraft:Craft', data.source, recipe.duration)
 
         return false
     end
