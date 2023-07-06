@@ -25,12 +25,7 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
 end)
 
-AddEventHandler('gameEventTriggered', function(name, args)
-    print('game event ' .. name .. ' (' .. json.encode(args) .. ')')
-end)
-
 AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unused, replicated)
-    print("carryItem")
     local ply = GetPlayerFromStateBagName(bagName)
     local plyPed = GetPlayerPed(ply)
 

@@ -262,6 +262,5 @@ end)
 
 
 AddEventHandler('ox_inventory:updateInventory', function()
-    print("update")
     TriggerServerEvent('backItems:onUpdateInventory')
 end)

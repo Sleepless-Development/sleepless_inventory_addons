@@ -1,7 +1,6 @@
 local ox_inventory = exports.ox_inventory
 
 local createCarryHook = ox_inventory:registerHook('createItem', function(payload)
-    print(json.encode(payload, {indent = true}))
 
       local carryData = CARRY_ITEMS[payload?.item?.name]
       local plyid = type(payload.inventoryId) == "number" and payload.inventoryId
