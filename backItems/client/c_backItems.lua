@@ -23,7 +23,7 @@ end
 -- Function to handle backItems on player load
 local function onLoad()
     LocalPlayer.state:set('backItems', BACK_ITEM_SLOTS_DEFAULT, true)
-    TriggerServerEvent("backItems:loadForSpawn")
+    TriggerServerEvent("backItems:onUpdateInventory")
 end
 
 RegisterNetEvent('esx:playerLoaded', onLoad)
@@ -38,9 +38,7 @@ end)
 
 AddEventHandler('onResourceStart', function(resourceName)
     if resourceName == GetCurrentResourceName() then
-        LocalPlayer.state:set('backItems', BACK_ITEM_SLOTS_DEFAULT, true)
-        Wait(500)
-        TriggerServerEvent("backItems:loadForSpawn")
+        onLoad()
     end
 end)
 
@@ -259,4 +257,11 @@ RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
         DeleteEntity(backSlot.obj)
     end
     playerBackSlots[serverId] = nil
+end)
+
+
+
+AddEventHandler('ox_inventory:updateInventory', function()
+    print("update")
+    TriggerServerEvent('backItems:onUpdateInventory')
 end)

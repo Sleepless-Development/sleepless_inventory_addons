@@ -2,15 +2,35 @@ local currentCarryObject = nil
 
 local function onLoad()
     LocalPlayer.state:set('carryItem', nil, true)
-    TriggerServerEvent("carryItem:loadForSpawn")
+    TriggerServerEvent("carryItem:onUpdateInventory")
 end
 
 RegisterNetEvent('esx:playerLoaded', onLoad)
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', onLoad)
 RegisterNetEvent('ox:playerLoaded', onLoad)
 
-AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unused, replicated)
+AddEventHandler('onResourceStop', function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        if currentCarryObject then
+            DeleteEntity(currentCarryObject)
+            ClearPedTasks(cache.ped)
+        end
+    end
+end)
 
+AddEventHandler('onResourceStart', function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        LocalPlayer.state:set('carryItem', nil, true)
+        TriggerServerEvent("carryItem:onUpdateInventory")
+    end
+end)
+
+AddEventHandler('gameEventTriggered', function(name, args)
+    print('game event ' .. name .. ' (' .. json.encode(args) .. ')')
+end)
+
+AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unused, replicated)
+    print("carryItem")
     local ply = GetPlayerFromStateBagName(bagName)
     local plyPed = GetPlayerPed(ply)
 
@@ -59,9 +79,18 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unu
     lib.requestAnimDict(propData.dictionary, 1000)
 
     while currentCarryObject do
-        if not IsEntityPlayingAnim(cache.ped, propData.dictionary, propData.animation, 3) then ---@todo may need to add dead checks and other things here as well
-            TaskPlayAnim(cache.ped, propData.dictionary, propData.animation, 2.0, 2.0, -1, propData.flag, 0, false, false, false)
+        if DoesEntityExist(GetVehiclePedIsTryingToEnter(cache.ped)) then
+            ClearPedTasks(cache.ped)
         end
-        Wait(1000)
+        if not IsEntityPlayingAnim(cache.ped, propData.dictionary, propData.animation, 3) then ---@todo may need to add dead checks and other things here as well
+            TaskPlayAnim(cache.ped, propData.dictionary, propData.animation, 2.0, 2.0, -1, propData.flag, 0, false, false,
+                false)
+        end
+        Wait(100)
     end
+end)
+
+
+AddEventHandler('ox_inventory:updateInventory', function()
+    TriggerServerEvent('carryItem:onUpdateInventory')
 end)

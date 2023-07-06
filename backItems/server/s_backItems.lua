@@ -1,5 +1,3 @@
-local ox_inventory = exports.ox_inventory
-
 local function getPotentialBackItems(playerItems)
     local potentialBackItems = {}
     for _, item in pairs(playerItems) do
@@ -55,33 +53,11 @@ local function generateNewBackItems(source)
     end)
 end
 
-local swapSlingHook = ox_inventory:registerHook('swapItems', function(payload)
-    if not (type(payload.fromSlot) == "table" and BACK_ITEMS[payload.fromSlot.name] or type(payload.toSlot) == "table" and BACK_ITEMS[payload.toSlot.name]) or not (payload.fromInventory == payload.source or payload.toInventory == payload.source) then return end
-
-    generateNewBackItems(payload.source)
-
-end, {})
-
-
-RegisterNetEvent("backItems:loadForSpawn", function()
-    local source = source --[[@as number]]
-
-    generateNewBackItems(source)
-
-end)
-
 AddEventHandler("playerDropped", function()
 	local source = source
     TriggerClientEvent("backItems:RemoveItemsOnDropped", -1, source)
 end)
 
-
-
-local createSlingHook = ox_inventory:registerHook('createItem', function(payload)
-    local plyid = type(payload.inventoryId) == "number" and payload.inventoryId
-
-    if not BACK_ITEMS[payload.item.name] or not plyid then return end
-
-    generateNewBackItems(plyid)
-
-end, {})
+RegisterNetEvent("backItems:onUpdateInventory", function()
+    generateNewBackItems(source)
+end)
