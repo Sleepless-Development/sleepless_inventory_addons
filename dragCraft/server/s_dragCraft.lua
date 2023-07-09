@@ -43,12 +43,14 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
             item1 = {
                 name = fromSlot.name,
                 amount = amount1,
-                remove = recipe.costs[fromSlot.name].remove
+                remove = recipe.costs[fromSlot.name].remove,
+                slot = fromSlot.slot
             },
             item2 = {
                 name = toSlot.name,
                 amount = amount2,
-                remove = recipe.costs[toSlot.name].remove
+                remove = recipe.costs[toSlot.name].remove,
+                slot = toSlot.slot
             },
             result = resultForQueue
         }
@@ -69,10 +71,44 @@ lib.callback.register('demi-dragCraft:success', function(source, success)
 
     if success then
         if queuedCraft.item1.remove then
-            ox_inventory:RemoveItem(source, queuedCraft.item1.name, queuedCraft.item1.amount)
+            if queuedCraft.item1.amount > 0 and queuedCraft.item1.amount < 1 then
+                local item = ox_inventory:GetSlot(source, queuedCraft.item1.slot)
+
+                if item then
+                    local durability = item.metadata?.durability or 100
+
+                    durability = durability - (100 * queuedCraft.item1.amount)
+
+                    if durability <= 0 then
+                        ox_inventory:RemoveItem(source, queuedCraft.item1.name, 1, nil, slot)
+                    else
+                        ox_inventory:SetDurability(source, item.slot, durability)
+                    end
+                end
+
+            else
+                ox_inventory:RemoveItem(source, queuedCraft.item1.name, queuedCraft.item1.amount)
+            end
         end
         if queuedCraft.item2.remove then
-            ox_inventory:RemoveItem(source, queuedCraft.item2.name, queuedCraft.item2.amount)
+            if queuedCraft.item2.amount > 0 and queuedCraft.item2.amount < 1 then
+                local item = ox_inventory:GetSlot(source, queuedCraft.item2.slot)
+
+                if item then
+                    local durability = item.metadata?.durability or 100
+
+                    durability = durability - (100 * queuedCraft.item2.amount)
+
+                    if durability <= 0 then
+                        ox_inventory:RemoveItem(source, queuedCraft.item2.name, 1, nil, slot)
+                    else
+                        ox_inventory:SetDurability(source, item.slot, durability)
+                    end
+                end
+
+            else
+                ox_inventory:RemoveItem(source, queuedCraft.item2.name, queuedCraft.item2.amount)
+            end
         end
         for i = 1, #queuedCraft.result do
             local resultData = queuedCraft.result[i]

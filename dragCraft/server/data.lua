@@ -7,7 +7,7 @@ RECIPES = {                       --create new item craft Recipies here. limited
             -- {name = 'something', amount = 1}
         },
         costs = {                                       --amount of both items needed to craft and if they should be removed on finished
-            ['garbage'] = { need = 1, remove = true },  -- item 1
+            ['garbage'] = { need = 0.1, remove = true },  -- item 1
             ['scrapmetal'] = { need = 1, remove = true }, -- item 2
         },
     },
