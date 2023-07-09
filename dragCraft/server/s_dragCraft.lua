@@ -80,7 +80,7 @@ lib.callback.register('demi-dragCraft:success', function(source, success)
                     durability = durability - (100 * queuedCraft.item1.amount)
 
                     if durability <= 0 then
-                        ox_inventory:RemoveItem(source, queuedCraft.item1.name, 1, nil, slot)
+                        ox_inventory:RemoveItem(source, queuedCraft.item1.name, 1, nil, item.slot)
                     else
                         ox_inventory:SetDurability(source, item.slot, durability)
                     end
@@ -100,7 +100,7 @@ lib.callback.register('demi-dragCraft:success', function(source, success)
                     durability = durability - (100 * queuedCraft.item2.amount)
 
                     if durability <= 0 then
-                        ox_inventory:RemoveItem(source, queuedCraft.item2.name, 1, nil, slot)
+                        ox_inventory:RemoveItem(source, queuedCraft.item2.name, 1, nil, item.slot)
                     else
                         ox_inventory:SetDurability(source, item.slot, durability)
                     end
