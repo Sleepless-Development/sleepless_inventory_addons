@@ -1,10 +1,10 @@
-BACK_ITEM_LIMIT = 3 --if you increase this, you must also add a new entry in BACK_ITEM_SLOTS_DEFAULT below with a defaultoffset
-
 BACK_ITEM_SLOTS_DEFAULT = {
     [1] = { backData = false, defaultoffset = 0.12 },
     [2] = { backData = false, defaultoffset = 0.00 },
     [3] = { backData = false, defaultoffset = -0.12 }
 }
+
+BACK_ITEM_LIMIT = #BACK_ITEM_SLOTS_DEFAULT
 
 BACK_ITEMS  = {
     ['WEAPON_CARBINERIFLE'] = {
