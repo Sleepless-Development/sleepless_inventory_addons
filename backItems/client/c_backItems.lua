@@ -229,8 +229,9 @@ end)
 end
 
 lib.onCache("weapon", function (weapon)
-    if weapon then
-        lastSlot = ox_inventory:getCurrentWeapon().slot
+    local currentWeapon = ox_inventory:getCurrentWeapon()
+    if weapon and currentWeapon then
+        lastSlot = currentWeapon.slot
         findItemAndSetVisible(false)
     else
         findItemAndSetVisible(true)
