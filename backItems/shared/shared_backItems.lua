@@ -9,22 +9,18 @@ BACK_ITEM_LIMIT = #BACK_ITEM_SLOTS_DEFAULT
 BACK_ITEMS  = {
     ['WEAPON_CARBINERIFLE'] = {
         prio = 3,
-        isWeapon = true,
         hash = joaat('WEAPON_CARBINERIFLE')
     },
     ['WEAPON_COMPACTRIFLE'] = {
         prio = 2,
-        isWeapon = true,
         hash = joaat('WEAPON_COMPACTRIFLE'),
     },
     ['WEAPON_MG'] = {
         prio = 4,
-        isWeapon = true,
         hash = joaat('WEAPON_MG'),
     },
     ['WEAPON_BAT'] = {
         prio = 1,
-        isWeapon = true,
         hash = joaat('WEAPON_BAT'),
         customPos = {
             pos = vec3(0.4, -0.15, 0.0),
@@ -34,7 +30,7 @@ BACK_ITEMS  = {
     ['cone'] = {
         prio = 1,
         ignoreLimits = true,
-        model = joaat('prop_roadcone02a'),
+        hash = joaat('prop_roadcone02a'),
         customPos = {
             bone = 12844,
             overrideDefaultZ = true,

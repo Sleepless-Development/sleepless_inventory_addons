@@ -55,7 +55,7 @@ end
 
 local function createObject(serverId, i)
     local slotData = playerBackSlots[serverId][i]
-    local model = slotData.backData.model
+    local model = slotData.backData.hash
 
     lib.requestModel(model, 2000)
     playerBackSlots[serverId][i].obj = CreateObject(model, 1.0, 1.0, 1.0, false, false, false)
@@ -181,10 +181,13 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
                 DeleteEntity(playerBackSlots[serverId][i].obj)
                 playerBackSlots[serverId][i].obj = nil
             end
-            if slotData.backData.isWeapon then
+
+            if not slotData.backData.hash then print(("[ERROR]: no hash value in data for %s"):format(slotData.backData.name)) return end
+
+            if IsWeaponValid(slotData.backData.hash) then
                 createWeapon(serverId, i)
                 handleWeaponComponents(serverId, i)
-            elseif slotData.backData.model then
+            else
                 createObject(serverId, i)
             end
             attachItemToPlayer(serverId, i, plyPed)

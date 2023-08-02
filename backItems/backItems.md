@@ -16,11 +16,7 @@ The following configuration variables are defined:
 
   - `ignoreLimits` (optional): Indicates whether the item should be exempted from the back item limit defined by `BACK_ITEM_LIMIT`. It is a boolean value.
 
-  - `model` (required for non-weapon models): Specifies the model of the non-weapon item. It should be the hash value of the model.
-
-  - `hash` (required for weapons): Specifies the hash value of the weapon.
-
-  - `isWeapon`: Indicates whether the item is a weapon (boolean value).
+  - `hash`(mandatory): Specifies the hash value of the weapon or model.
 
   - `customPos` (optional, but mandatory when `ignoreLimits` is used): Contains custom position and rotation data for the item. It is a table with the following properties:
     - `pos`: Specifies the position of the item as a vector3 (x, y, z).
@@ -35,8 +31,7 @@ To add new items, follow the structure of the existing items in the `BACK_ITEMS`
 ```lua
 ['NEW_ITEM'] = {
     prio = 1,
-    isWeapon = false,
-    model = joaat('new_item_model'),
+    hash = joaat('model_or_weapon_hash'),
     customPos = {
         pos = vec3(0.0, 0.0, 0.0),
         rot = vec3(0.0, 0.0, 0.0)
@@ -48,11 +43,9 @@ In this example, we've added a new item called 'NEW_ITEM'. Here are the properti
 
 - `prio`: The priority of the item is set to 1.
 - `isWeapon`: Since this is not a weapon, we set it to `false`.
-- `model`: We specify the model of the new item using the `model` property. Replace `new_item_model` with the appropriate hash value for the desired model.
+- `hash`: We specify the model of the new item using the `hash` property. Replace `model_or_weapon_hash` with the appropriate hash value for the desired model or weapon.
 - `customPos`: We provide custom position and rotation data for the item. The `pos` property is set to the default position (0.0, 0.0, 0.0), and the `rot` property is set to the default rotation (0.0, 0.0, 0.0).
 
-You can modify the values of the properties based on your needs. Remember to replace `new_item_model` with the correct
-
- hash value for the desired model.
+You can modify the values of the properties based on your needs.
 
 Save the changes and run the code with the new item configuration.
