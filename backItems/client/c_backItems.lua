@@ -182,7 +182,12 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
                 playerBackSlots[serverId][i].obj = nil
             end
 
-            if not slotData.backData.hash then print(("[ERROR]: no hash value in data for %s"):format(slotData.backData.name)) return end
+            if not slotData.backData.hash then
+                    if slotData.backData.name then
+                        print(("[ERROR]: no hash value in data for %s"):format(slotData.backData.name))
+                    end
+                return 
+            end
 
             if IsWeaponValid(slotData.backData.hash) then
                 createWeapon(serverId, i)
