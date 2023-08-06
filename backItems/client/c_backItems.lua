@@ -6,8 +6,10 @@ local playerBackSlots = {}
 -- Function to delete weapon entities and reset backData
 local function deleteBackItems(serverId)
     for i = 1, #playerBackSlots[serverId] do
-        DeleteEntity(playerBackSlots[serverId][i].obj)
-        playerBackSlots[serverId][i].obj = nil
+        if playerBackSlots[serverId][i].obj then
+            DeleteEntity(playerBackSlots[serverId][i].obj)
+            playerBackSlots[serverId][i].obj = nil
+        end
         playerBackSlots[serverId][i] = BACK_ITEM_SLOTS_DEFAULT[i] and lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT[i]) or nil
     end
 end
@@ -69,7 +71,7 @@ local function handleWeaponComponents(serverId, i)
     local tryComponent = ("COMPONENT_%s_CLIP_01"):format(string.gsub(slotData.backData.name, "WEAPON_", "")) --[[@as number]]
     tryComponent = joaat(tryComponent)
     local componentModel = GetWeaponComponentTypeModel(tryComponent)
-    if componentModel ~= 0 then
+    if componentModel ~= 0 and DoesEntityExist(playerBackSlots[serverId][i].obj) then
         lib.requestModel(componentModel, 2000)
         GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, tryComponent)
     end
@@ -79,7 +81,7 @@ local function handleWeaponComponents(serverId, i)
         for v= 1, #components do
             local component = components[v]
             if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
-                if not HasWeaponGotWeaponComponent(playerBackSlots[serverId][i].obj, component) then
+                if not HasWeaponGotWeaponComponent(playerBackSlots[serverId][i].obj, component) and DoesEntityExist(playerBackSlots[serverId][i].obj) then
                     local componentModel = GetWeaponComponentTypeModel(component)
                     lib.requestModel(componentModel, 2000)
                     GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, component)
@@ -121,7 +123,7 @@ CreateThread(function()
                     local player = GetPlayerFromServerId(serverId)
                     local targetPed = GetPlayerPed(player)
                     if targetPed and DoesEntityExist(targetPed) and type(player) == "number" and player > 0 then
-                        if not IsEntityAttachedToEntity(backItem, targetPed) then
+                        if DoesEntityExist(backItem) and not IsEntityAttachedToEntity(backItem, targetPed) then
                             attachItemToPlayer(serverId, i, targetPed)
                         end
                     end
@@ -140,9 +142,9 @@ AddStateBagChangeHandler("backItemVisible", nil, function(bagName, key, data, _u
     local slotData = playerBackSlots[serverId]?[data.slot]
     local object = slotData?.obj
 
-    if not object then return end
+    if not DoesEntityExist(object) then return end
 
-    SetEntityVisible(playerBackSlots[serverId][data.slot].obj, data.toggle, false)
+    SetEntityVisible(object, data.toggle, false)
 end)
 
 -- Handler for state bag change
@@ -215,7 +217,7 @@ end)
      for i = 1, #playerBackSlots[serverId] do
          local backSlot = playerBackSlots[serverId][i]
          local plyState = LocalPlayer.state
-         if backSlot?.backData?.slot == lastSlot then
+         if backSlot?.backData?.slot and backSlot.backData.slot == lastSlot then
              SetEntityVisible(backSlot.obj, visible, false)
              plyState:set("backItemVisible", {toggle = visible, slot = i}, true)
              return
@@ -231,8 +233,10 @@ end)
     for i = 1, #playerBackSlots[serverId] do
         local backSlot = playerBackSlots[serverId][i]
         local plyState = LocalPlayer.state
-        SetEntityVisible(backSlot.obj, visible, false)
-        plyState:set("backItemVisible", {toggle = visible, slot = i}, true)
+        if backSlot.obj and DoesEntityExist(backSlot.obj) then
+            SetEntityVisible(backSlot.obj, visible, false)
+            plyState:set("backItemVisible", {toggle = visible, slot = i}, true)
+        end
     end
 end
 
@@ -263,7 +267,9 @@ RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
 
     for i = 1, #playerBackSlots[serverId] do
         local backSlot = playerBackSlots[serverId][i]
-        DeleteEntity(backSlot.obj)
+        if DoesEntityExist(backSlot.obj) then
+            DeleteEntity(backSlot.obj)
+        end
     end
     playerBackSlots[serverId] = nil
 end)
