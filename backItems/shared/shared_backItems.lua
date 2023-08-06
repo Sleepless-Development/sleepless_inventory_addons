@@ -1,3 +1,5 @@
+INVENTORY_ITEMS = exports.ox_inventory:Items()
+
 BACK_ITEM_SLOTS_DEFAULT = {
     [1] = { backData = false, defaultoffset = 0.12 },
     [2] = { backData = false, defaultoffset = 0.00 },

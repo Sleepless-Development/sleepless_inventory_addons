@@ -1,7 +1,7 @@
 -- Local variable declaration
 local ox_inventory = exports.ox_inventory
 local playerBackSlots = {}
-local inventoryItems = exports.ox_inventory:Items()
+
 
 -- Function to delete weapon entities and reset backData
 local function deleteBackItems(serverId)
@@ -75,7 +75,7 @@ local function handleWeaponComponents(serverId, i)
     end
 
     for k = 1, #slotData.backData.attachments do
-        local components = inventoryItems[slotData.backData.attachments[k]].client.component
+        local components = INVENTORY_ITEMS[slotData.backData.attachments[k]].client.component
         for v= 1, #components do
             local component = components[v]
             if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
@@ -120,7 +120,7 @@ CreateThread(function()
                 if backItem then
                     local player = GetPlayerFromServerId(serverId)
                     local targetPed = GetPlayerPed(player)
-                    if targetPed and DoesEntityExist(targetPed) and player > 0 then
+                    if targetPed and DoesEntityExist(targetPed) and type(player) == "number" and player > 0 then
                         if not IsEntityAttachedToEntity(backItem, targetPed) then
                             attachItemToPlayer(serverId, i, targetPed)
                         end
@@ -134,7 +134,7 @@ end)
 AddStateBagChangeHandler("backItemVisible", nil, function(bagName, key, data, _unused, replicated)
     local ply = GetPlayerFromStateBagName(bagName)
 
-    if ply < 1 then return end
+    if type(ply) ~= "number" or ply < 1 then return end
 
     local serverId = GetPlayerServerId(ply)
     local slotData = playerBackSlots[serverId]?[data.slot]
@@ -186,7 +186,7 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
                     if slotData.backData.name then
                         print(("[ERROR]: no hash value in data for %s"):format(slotData.backData.name))
                     end
-                return 
+                return
             end
 
             if IsWeaponValid(slotData.backData.hash) then
