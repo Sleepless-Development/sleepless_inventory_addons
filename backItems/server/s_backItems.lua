@@ -14,7 +14,6 @@ end
 
 local function generateNewBackItems(source)
     CreateThread(function ()
-        Wait(500) --wait for inventory to update after whatever hook
         local playerState = Player(source).state
         local playerItems = exports.ox_inventory:GetInventoryItems(source)
         local newBackItems = {}
@@ -48,6 +47,7 @@ local function generateNewBackItems(source)
             end
         end
 
+        print('setting backItems state for serverId', source)
         playerState:set("backItems", newBackItems, true)
 
     end)

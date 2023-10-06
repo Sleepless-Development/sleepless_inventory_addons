@@ -46,13 +46,13 @@ end)
 
 -- Function to handle weapon creation
 local function createWeapon(serverId, i)
+    print('create weapon for serverid', serverId)
     local slotData = playerBackSlots[serverId][i]
     lib.requestWeaponAsset(slotData.backData.hash, 2000, 31, 0)
     local coords = GetEntityCoords(cache.ped)
     playerBackSlots[serverId][i].obj = CreateWeaponObject(slotData.backData.hash, 0, coords.x, coords.y, coords.z, false, 1.0, false)
 
     SetEntityCollision(playerBackSlots[serverId][i].obj, false, false)
-    RequestWeaponHighDetailModel(playerBackSlots[serverId][i].obj)
 end
 
 local function createObject(serverId, i)
@@ -67,21 +67,24 @@ end
 
 -- Function to handle weapon components
 local function handleWeaponComponents(serverId, i)
+    print('handleWeaponComponents:', 'start')
     local slotData = playerBackSlots[serverId][i]
     local tryComponent = ("COMPONENT_%s_CLIP_01"):format(string.gsub(slotData.backData.name, "WEAPON_", "")) --[[@as number]]
     tryComponent = joaat(tryComponent)
     local componentModel = GetWeaponComponentTypeModel(tryComponent)
     if componentModel ~= 0 and DoesEntityExist(playerBackSlots[serverId][i].obj) then
+        print('request model and give component to weapon')
         lib.requestModel(componentModel, 2000)
         GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, tryComponent)
     end
 
     for k = 1, #slotData.backData.attachments do
         local components = INVENTORY_ITEMS[slotData.backData.attachments[k]].client.component
-        for v= 1, #components do
+        for v = 1, #components do
             local component = components[v]
             if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
                 if not HasWeaponGotWeaponComponent(playerBackSlots[serverId][i].obj, component) and DoesEntityExist(playerBackSlots[serverId][i].obj) then
+                    print('request model and give component to weapon')
                     local componentModel = GetWeaponComponentTypeModel(component)
                     lib.requestModel(componentModel, 2000)
                     GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, component)
@@ -99,6 +102,8 @@ local function attachItemToPlayer(serverId, i, plyPed)
     local pos = slotData.backData?.customPos?.pos
     local overrideDefaultZ = slotData.backData?.customPos?.overrideDefaultZ
     local bone = slotData.backData?.customPos?.bone
+
+    print("attach item to player", json.encode({slotData = slotData, object = object, rot = rot, pos = pos, overrideDefaultZ = overrideDefaultZ, bone = bone}, {indent = true}))
     AttachEntityToEntity(
         object,
         plyPed,
@@ -124,6 +129,7 @@ CreateThread(function()
                     local targetPed = GetPlayerPed(player)
                     if targetPed and DoesEntityExist(targetPed) and type(player) == "number" and player > 0 then
                         if DoesEntityExist(backItem) and not IsEntityAttachedToEntity(backItem, targetPed) then
+                            print('item was not attached to player, reattaching to serverId:', serverId)
                             attachItemToPlayer(serverId, i, targetPed)
                         end
                     end
@@ -134,6 +140,7 @@ CreateThread(function()
 end)
 
 AddStateBagChangeHandler("backItemVisible", nil, function(bagName, key, data, _unused, replicated)
+    print('backItemVisible change handler:', 'start')
     local ply = GetPlayerFromStateBagName(bagName)
 
     if type(ply) ~= "number" or ply < 1 then return end
@@ -142,37 +149,45 @@ AddStateBagChangeHandler("backItemVisible", nil, function(bagName, key, data, _u
     local slotData = playerBackSlots[serverId]?[data.slot]
     local object = slotData?.obj
 
-    if not DoesEntityExist(object) then return end
+    print('serverID', serverId)
+    print('object', object)
 
+    if not DoesEntityExist(object) then
+        print('object did not exist, returning', object)
+        return
+    end
+    print('set object visible', data.toggle)
     SetEntityVisible(object, data.toggle, false)
 end)
 
 -- Handler for state bag change
 AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, _unused, replicated)
-
+    print('backitems change handler:', 'start')
     local ply = GetPlayerFromStateBagName(bagName)
-
-    if not ply then return end
+    print('player', ply)
+    if type(ply) ~= "number" or ply < 1 then return end
 
     local plyPed = GetPlayerPed(ply)
     local serverId = GetPlayerServerId(ply)
-
+    print('ped', plyPed)
+    print('serverId', serverId)
     while plyPed == 0 or not HasCollisionLoadedAroundEntity(plyPed) do
         Wait(0)
         plyPed = GetPlayerPed(ply)
-        if not DoesEntityExist(plyPed) then return end
+        if not DoesEntityExist(plyPed) then print('plyPed did not exist, returning', plyPed) return end
     end
 
     if not playerBackSlots[serverId] then
+        print('initializing backslots for serverId', serverId)
         playerBackSlots[serverId] = lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT)
     end
 
     deleteBackItems(serverId)
+    print('delete back items', serverId)
 
     for i = 1, #newSlotsData do
-
         if not playerBackSlots[serverId][i] then
-            playerBackSlots[serverId][i] = {backData = false}
+            playerBackSlots[serverId][i] = { backData = false }
         end
 
         playerBackSlots[serverId][i].backData = newSlotsData[i]
@@ -185,21 +200,24 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
             end
 
             if not slotData.backData.hash then
-                    if slotData.backData.name then
-                        print(("[ERROR]: no hash value in data for %s"):format(slotData.backData.name))
-                    end
+                if slotData.backData.name then
+                    print(("[ERROR]: no hash value in data for %s"):format(slotData.backData.name))
+                end
                 return
             end
 
             if IsWeaponValid(slotData.backData.hash) then
+                print('create weapon', slotData.backData.name)
                 createWeapon(serverId, i)
                 handleWeaponComponents(serverId, i)
             else
+                print('create object', slotData.backData.name)
                 createObject(serverId, i)
             end
             attachItemToPlayer(serverId, i, plyPed)
         else
             if playerBackSlots[serverId][i].obj then
+                print('delete entity', slotData.backData.name)
                 DeleteEntity(playerBackSlots[serverId][i].obj)
                 playerBackSlots[serverId][i].obj = nil
                 playerBackSlots[serverId][i].backData = false
@@ -208,24 +226,24 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
     end
 end)
 
- local lastSlot = nil
- local function findItemAndSetVisible(visible)
-     local serverId = cache.serverId
+local lastSlot = nil
+local function findItemAndSetVisible(visible)
+    local serverId = cache.serverId
 
-     if not playerBackSlots[serverId] then return end
+    if not playerBackSlots[serverId] then return end
 
-     for i = 1, #playerBackSlots[serverId] do
-         local backSlot = playerBackSlots[serverId][i]
-         local plyState = LocalPlayer.state
-         if backSlot?.backData?.slot and backSlot.backData.slot == lastSlot then
-             SetEntityVisible(backSlot.obj, visible, false)
-             plyState:set("backItemVisible", {toggle = visible, slot = i}, true)
-             return
-         end
-     end
- end
+    for i = 1, #playerBackSlots[serverId] do
+        local backSlot = playerBackSlots[serverId][i]
+        local plyState = LocalPlayer.state
+        if backSlot?.backData?.slot and backSlot.backData.slot == lastSlot then
+            SetEntityVisible(backSlot.obj, visible, false)
+            plyState:set("backItemVisible", { toggle = visible, slot = i }, true)
+            return
+        end
+    end
+end
 
- local function setAllBackItemsVisible(visible)
+local function setAllBackItemsVisible(visible)
     local serverId = cache.serverId
 
     if not playerBackSlots[serverId] then return end
@@ -235,12 +253,12 @@ end)
         local plyState = LocalPlayer.state
         if backSlot.obj and DoesEntityExist(backSlot.obj) then
             SetEntityVisible(backSlot.obj, visible, false)
-            plyState:set("backItemVisible", {toggle = visible, slot = i}, true)
+            plyState:set("backItemVisible", { toggle = visible, slot = i }, true)
         end
     end
 end
 
-lib.onCache("weapon", function (weapon)
+lib.onCache("weapon", function(weapon)
     local currentWeapon = ox_inventory:getCurrentWeapon()
     if weapon and currentWeapon then
         lastSlot = currentWeapon.slot
@@ -250,7 +268,7 @@ lib.onCache("weapon", function (weapon)
     end
 end)
 
-lib.onCache("vehicle", function (vehicle)
+lib.onCache("vehicle", function(vehicle)
     if vehicle then
         if IsThisModelABike(GetEntityModel(vehicle)) then return end
         setAllBackItemsVisible(false)
