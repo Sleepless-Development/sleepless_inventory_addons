@@ -140,7 +140,7 @@ CreateThread(function()
 end)
 
 AddStateBagChangeHandler("backItemVisible", nil, function(bagName, key, data, _unused, replicated)
-    print('backItemVisible change handler:', 'start')
+    print('backItemVisible change handler:', 'start', bagName)
     local ply = GetPlayerFromStateBagName(bagName)
 
     if type(ply) ~= "number" or ply < 1 then return end
@@ -162,7 +162,7 @@ end)
 
 -- Handler for state bag change
 AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, _unused, replicated)
-    print('backitems change handler:', 'start')
+    print('backitems change handler:', 'start', bagName)
     local ply = GetPlayerFromStateBagName(bagName)
     print('player', ply)
     if type(ply) ~= "number" or ply < 1 then return end
