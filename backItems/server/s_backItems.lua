@@ -1,9 +1,11 @@
 local function getPotentialBackItems(source, playerItems, hideall, weapon)
+    if type(playerItems) ~= "table" then return {} end
     local potentialBackItems = {}
     Wait(300)
     local currentWeapon = exports.ox_inventory:GetCurrentWeapon(source)
     print(source)
     print(json.encode(currentWeapon, { indent = true }))
+
     for _, item in pairs(playerItems) do
         if item and BACK_ITEMS[item.name] then
             local index = #potentialBackItems + 1
