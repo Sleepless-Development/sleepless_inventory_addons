@@ -15,10 +15,13 @@ local function getPotentialBackItems(source, playerItems, hideall, weapon)
             potentialBackItems[index].attachments = item?.metadata?.components or {}
 
             local visible = true
-            print('hideall', hideall)
-            print('visible', not currentWeapon.slot == item.slot, currentWeapon.slot, item.slot)
-            if (hideall ~= nil and hideall or weapon and currentWeapon?.slot == item?.slot) then
+            if (hideall ~= nil and hideall) then
                 visible = false
+            end
+            if weapon and currentWeapon then
+                if currentWeapon.slot == item.slot then
+                    visible = false
+                end
             end
             potentialBackItems[index].visible = visible
         end
