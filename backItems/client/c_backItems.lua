@@ -247,7 +247,7 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
 end)
 
 local function setAllBackItemsVisible(visible)
-    plyState:set("hideAllBackItems", visible, true)
+    LocalPlayer.state:set("hideAllBackItems", visible, true)
 end
 
 lib.onCache("weapon", function(weapon)
