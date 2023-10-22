@@ -42,7 +42,6 @@ To add new items, follow the structure of the existing items in the `BACK_ITEMS`
 In this example, we've added a new item called 'NEW_ITEM'. Here are the properties used:
 
 - `prio`: The priority of the item is set to 1.
-- `isWeapon`: Since this is not a weapon, we set it to `false`.
 - `hash`: We specify the model of the new item using the `hash` property. Replace `model_or_weapon_hash` with the appropriate hash value for the desired model or weapon.
 - `customPos`: We provide custom position and rotation data for the item. The `pos` property is set to the default position (0.0, 0.0, 0.0), and the `rot` property is set to the default rotation (0.0, 0.0, 0.0).
 
