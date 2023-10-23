@@ -276,6 +276,17 @@ RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
     playerBackSlots[serverId] = nil
 end)
 
-AddEventHandler('ox_inventory:updateInventory', function()
+local function shouldUpdate(changes)
+    for i = 1, #changes do
+        local change = changes[i]
+        if change then
+            return BACK_ITEMS[change.name]
+        end
+    end
+    return false
+end
+
+AddEventHandler('ox_inventory:updateInventory', function(changes)
+    if not shouldUpdate(changes) then return end
     TriggerServerEvent('backItems:onUpdateInventory')
 end)

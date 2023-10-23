@@ -15,14 +15,17 @@ local function getPotentialBackItems(source, playerItems, hideall, weapon)
             potentialBackItems[index].attachments = item?.metadata?.components or {}
 
             local visible = true
-            if (hideall ~= nil and hideall) then
+
+            if hideall then
                 visible = false
             end
+
             if weapon and currentWeapon then
                 if currentWeapon.slot == item.slot then
                     visible = false
                 end
             end
+
             potentialBackItems[index].visible = visible
         end
     end
@@ -66,8 +69,9 @@ local function generateNewBackItems(source, weapon)
             end
         end
 
-        print('setting backItems state for serverId', source)
-        playerState:set("backItems", newBackItems, true)
+        if not lib.table.matches(newBackItems, playerState.backItems) then
+            playerState:set("backItems", newBackItems, true)
+        end
     end)
 end
 
