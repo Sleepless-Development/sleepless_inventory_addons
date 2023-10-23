@@ -1,7 +1,6 @@
 -- Local variable declaration
 local playerBackSlots = {}
 
-
 -- Function to delete weapon entities and reset backData
 local function deleteBackItems(serverId)
     for i = 1, #playerBackSlots[serverId] do
@@ -246,9 +245,11 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
     end
 end)
 
-local function setAllBackItemsVisible(visible)
+local function hideAllBackItems(visible)
     plyState:set("hideAllBackItems", visible, true)
 end
+
+exports("hideAllBackItems", hideAllBackItems)
 
 lib.onCache("weapon", function(weapon)
     TriggerServerEvent('backItems:onUpdateInventory', weapon)
@@ -257,14 +258,11 @@ end)
 lib.onCache("vehicle", function(vehicle)
     if vehicle then
         if IsThisModelABike(GetEntityModel(vehicle)) then return end
-        setAllBackItemsVisible(false)
+        hideAllBackItems(true)
     else
-        setAllBackItemsVisible(true)
+        hideAllBackItems(false)
     end
 end)
-
-exports("setAllBackItemsVisible", setAllBackItemsVisible)
-
 
 RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
     if not playerBackSlots[serverId] then return end
@@ -278,14 +276,6 @@ RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
     playerBackSlots[serverId] = nil
 end)
 
-
-
 AddEventHandler('ox_inventory:updateInventory', function()
     TriggerServerEvent('backItems:onUpdateInventory')
-end)
-
-RegisterCommand("whatsmyweaponc", function(src)
-    local currentWeapon = exports.ox_inventory:getCurrentWeapon()
-
-    print(json.encode(currentWeapon, { indent = true }))
 end)
