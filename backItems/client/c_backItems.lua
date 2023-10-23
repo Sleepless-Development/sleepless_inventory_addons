@@ -46,9 +46,8 @@ end)
 
 -- Function to handle weapon creation
 local function createWeapon(serverId, i)
-    print('create weapon for serverid', serverId)
     local slotData = playerBackSlots[serverId][i]
-    print(json.encode(slotData, { indent = true }))
+
     lib.requestWeaponAsset(slotData.backData.hash, 2000, 31, 0)
     local coords = GetEntityCoords(cache.ped)
     playerBackSlots[serverId][i].obj = CreateWeaponObject(slotData.backData.hash, 0, coords.x, coords.y, coords.z, false,
@@ -69,13 +68,11 @@ end
 
 -- Function to handle weapon components
 local function handleWeaponComponents(serverId, i)
-    print('handleWeaponComponents:', 'start')
     local slotData = playerBackSlots[serverId][i]
     local tryComponent = ("COMPONENT_%s_CLIP_01"):format(string.gsub(slotData.backData.name, "WEAPON_", "")) --[[@as number]]
     tryComponent = joaat(tryComponent)
     local componentModel = GetWeaponComponentTypeModel(tryComponent)
     if componentModel ~= 0 and DoesEntityExist(playerBackSlots[serverId][i].obj) then
-        print('request model and give component to weapon')
         lib.requestModel(componentModel, 2000)
         GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, tryComponent)
     end
@@ -86,7 +83,6 @@ local function handleWeaponComponents(serverId, i)
             local component = components[v]
             if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
                 if not HasWeaponGotWeaponComponent(playerBackSlots[serverId][i].obj, component) and DoesEntityExist(playerBackSlots[serverId][i].obj) then
-                    print('request model and give component to weapon')
                     local componentModel = GetWeaponComponentTypeModel(component)
                     lib.requestModel(componentModel, 2000)
                     GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, component)
@@ -105,17 +101,6 @@ local function attachItemToPlayer(serverId, i, plyPed)
     local overrideDefaultZ = slotData.backData?.customPos?.overrideDefaultZ
     local bone = slotData.backData?.customPos?.bone
 
-    print("attach item to player",
-        json.encode(
-            {
-                slotData = slotData,
-                object = object,
-                rot = rot,
-                pos = pos,
-                overrideDefaultZ = overrideDefaultZ,
-                bone = bone
-            },
-            { indent = true }))
     AttachEntityToEntity(
         object,
         plyPed,
@@ -141,7 +126,6 @@ CreateThread(function()
                     local targetPed = GetPlayerPed(player)
                     if targetPed and DoesEntityExist(targetPed) and type(player) == "number" and player > 0 then
                         if DoesEntityExist(backItem) and not IsEntityAttachedToEntity(backItem, targetPed) then
-                            print('item was not attached to player, reattaching to serverId:', serverId)
                             attachItemToPlayer(serverId, i, targetPed)
                         end
                     end
@@ -151,38 +135,15 @@ CreateThread(function()
     end
 end)
 
--- AddStateBagChangeHandler("backItemVisible", nil, function(bagName, key, data, _unused, replicated)
---     print('backItemVisible change handler:', 'start', bagName)
---     local ply = GetPlayerFromStateBagName(bagName)
-
---     if type(ply) ~= "number" or ply < 1 then return end
-
---     local serverId = GetPlayerServerId(ply)
---     local slotData = playerBackSlots[serverId]?[data.slot]
---     local object = slotData?.obj
-
---     print('serverID', serverId)
---     print('object', object)
-
---     if not DoesEntityExist(object) then
---         print('object did not exist, returning', object)
---         return
---     end
---     print('set object visible', data.toggle)
---     SetEntityVisible(object, data.toggle, false)
--- end)
-
 -- Handler for state bag change
 AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, _unused, replicated)
-    print('backitems change handler:', 'start', bagName)
     local ply = GetPlayerFromStateBagName(bagName)
-    print('player', ply)
+
     if type(ply) ~= "number" or ply < 1 then return end
 
     local plyPed = GetPlayerPed(ply)
     local serverId = GetPlayerServerId(ply)
-    print('ped', plyPed)
-    print('serverId', serverId)
+
     while plyPed == 0 or not HasCollisionLoadedAroundEntity(plyPed) do
         Wait(0)
         plyPed = GetPlayerPed(ply)
@@ -193,12 +154,10 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
     end
 
     if not playerBackSlots[serverId] then
-        print('initializing backslots for serverId', serverId)
         playerBackSlots[serverId] = lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT)
     end
 
     deleteBackItems(serverId)
-    print('delete back items', serverId)
 
     for i = 1, #newSlotsData do
         if not playerBackSlots[serverId][i] then
@@ -208,7 +167,6 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
         playerBackSlots[serverId][i].backData = newSlotsData[i]
 
         local slotData = playerBackSlots[serverId][i]
-        print(json.encode(slotData, { indent = true }))
 
         if slotData.backData then
             if slotData.backData.visible then
@@ -225,18 +183,15 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
                 end
 
                 if IsWeaponValid(slotData.backData.hash) then
-                    print('create weapon', slotData.backData.name)
                     createWeapon(serverId, i)
                     handleWeaponComponents(serverId, i)
                 else
-                    print('create object', slotData.backData.name)
                     createObject(serverId, i)
                 end
                 attachItemToPlayer(serverId, i, plyPed)
             end
         else
             if playerBackSlots[serverId][i].obj then
-                print('delete entity', slotData.backData.name)
                 DeleteEntity(playerBackSlots[serverId][i].obj)
                 playerBackSlots[serverId][i].obj = nil
                 playerBackSlots[serverId][i].backData = false
