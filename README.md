@@ -4,24 +4,22 @@ This resource enhances gameplay experience by providing several modules that uti
 
 ## Modules
 
-### backItems (beta)
+### backItems
 
 The `backItems` module allows you to add items to a list that will appear attached to your character when the corresponding item is in your inventory.
-
- - **side-note**: there is a crashing issue with this module currently. use with caution. there is a number of prints ive added to help me track down the issue as well.
 
 [backItems.md](./backItems/backItems.md)
 
 ### dragCraft
 
-The `dragCraft` module enables the creation of crafting recipes triggered by dragging two items on top of each other in the inventory. 
+The `dragCraft` module enables the creation of crafting recipes triggered by dragging two items on top of each other in the inventory.
 This intuitive system simplifies the crafting process and adds an interactive element to the inventory.
 
 [dragCraft.md](./dragCraft/dragCraft.md)
 
 ### itemCarry
 
-The `itemCarry` module allows you to define items in a list that your character will physically carry and play an animation when the corresponding item enters your inventory. 
+The `itemCarry` module allows you to define items in a list that your character will physically carry and play an animation when the corresponding item enters your inventory.
 
 [itemCarry.md](./itemCarry/itemCarry.md)
 
