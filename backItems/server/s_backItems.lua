@@ -1,9 +1,11 @@
 local function getPotentialBackItems(source, playerItems, hideall, weapon)
+    if type(playerItems) ~= "table" then return {} end
     local potentialBackItems = {}
     Wait(300)
     local currentWeapon = exports.ox_inventory:GetCurrentWeapon(source)
     print(source)
     print(json.encode(currentWeapon, { indent = true }))
+
     for _, item in pairs(playerItems) do
         if item and BACK_ITEMS[item.name] then
             local index = #potentialBackItems + 1
@@ -13,10 +15,13 @@ local function getPotentialBackItems(source, playerItems, hideall, weapon)
             potentialBackItems[index].attachments = item?.metadata?.components or {}
 
             local visible = true
-            print('hideall', hideall)
-            print('visible', not currentWeapon.slot == item.slot, currentWeapon.slot, item.slot)
-            if (hideall ~= nil and hideall or weapon and currentWeapon.slot == item.slot) then
+            if (hideall ~= nil and hideall) then
                 visible = false
+            end
+            if weapon and currentWeapon then
+                if currentWeapon.slot == item.slot then
+                    visible = false
+                end
             end
             potentialBackItems[index].visible = visible
         end
