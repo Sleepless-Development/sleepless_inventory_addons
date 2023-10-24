@@ -23,8 +23,8 @@ end
 
 -- Function to handle backItems on player load
 local function onLoad()
-    Wait(2500)
     LocalPlayer.state:set('backItems', BACK_ITEM_SLOTS_DEFAULT, true)
+    Wait(1000)
     TriggerServerEvent("backItems:onUpdateInventory")
 end
 
@@ -77,15 +77,21 @@ local function handleWeaponComponents(serverId, i)
         GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, tryComponent)
     end
 
-    for k = 1, #slotData.backData.attachments do
-        local components = INVENTORY_ITEMS[slotData.backData.attachments[k]].client.component
-        for v = 1, #components do
-            local component = components[v]
-            if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
-                if not HasWeaponGotWeaponComponent(playerBackSlots[serverId][i].obj, component) and DoesEntityExist(playerBackSlots[serverId][i].obj) then
-                    local componentModel = GetWeaponComponentTypeModel(component)
-                    lib.requestModel(componentModel, 2000)
-                    GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, component)
+    if slotData.backData.tint then
+        SetWeaponObjectTintIndex(playerBackSlots[serverId][i].obj, slotData.backData.tint)
+    end
+
+    if slotData.backData.attachments then
+        for k = 1, #slotData.backData.attachments do
+            local components = INVENTORY_ITEMS[slotData.backData.attachments[k]].client.component
+            for v = 1, #components do
+                local component = components[v]
+                if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
+                    if not HasWeaponGotWeaponComponent(playerBackSlots[serverId][i].obj, component) and DoesEntityExist(playerBackSlots[serverId][i].obj) then
+                        local componentModel = GetWeaponComponentTypeModel(component)
+                        lib.requestModel(componentModel, 2000)
+                        GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, component)
+                    end
                 end
             end
         end
@@ -232,8 +238,10 @@ RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
 end)
 
 local function shouldUpdate(changes)
-    for i = 1, #changes do
-        local change = changes[i]
+    for _, change in pairs(changes) do
+        if change == false then
+            return true
+        end
         if change then
             return BACK_ITEMS[change.name]
         end
