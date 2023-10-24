@@ -10,18 +10,15 @@ local function getPotentialBackItems(source, playerItems, hideall, weapon)
             potentialBackItems[index] = lib.table.deepclone(BACK_ITEMS[item.name])
             potentialBackItems[index].slot = item.slot
             potentialBackItems[index].name = item.name
-            potentialBackItems[index].attachments = item?.metadata?.components or {}
+            if item.metadata then
+                potentialBackItems[index].attachments = item.metadata.components
+                potentialBackItems[index].tint = item.metadata.tint
+            end
 
             local visible = true
 
-            if hideall then
+            if (weapon and currentWeapon and currentWeapon.slot == item.slot) or hideall then
                 visible = false
-            end
-
-            if weapon and currentWeapon then
-                if currentWeapon.slot == item.slot then
-                    visible = false
-                end
             end
 
             potentialBackItems[index].visible = visible
