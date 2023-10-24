@@ -12,7 +12,7 @@ shared_scripts {
 }
 
 server_scripts {
-	'verson.lua',
+	'version.lua',
 	'**/server/*.lua',
 }
 
