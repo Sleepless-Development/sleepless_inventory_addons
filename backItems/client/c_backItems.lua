@@ -206,8 +206,8 @@ AddStateBagChangeHandler("backItems", nil, function(bagName, key, newSlotsData, 
     end
 end)
 
-local function hideAllBackItems(visible)
-    LocalPlayer.state:set("hideAllBackItems", visible, true)
+local function hideAllBackItems(hide)
+    LocalPlayer.state:set("hideAllBackItems", hide, true)
 end
 
 exports("hideAllBackItems", hideAllBackItems)
