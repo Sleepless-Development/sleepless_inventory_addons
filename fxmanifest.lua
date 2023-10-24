@@ -3,7 +3,7 @@ fx_version 'cerulean'
 lua54 'yes'
 game 'gta5'
 
-version '1.0.3'
+version '1.0.4'
 
 
 shared_scripts {
@@ -12,6 +12,7 @@ shared_scripts {
 }
 
 server_scripts {
+	'verson.lua',
 	'**/server/*.lua',
 }
 
