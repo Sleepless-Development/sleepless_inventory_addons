@@ -238,12 +238,11 @@ RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
 end)
 
 local function shouldUpdate(changes)
+    print(json.encode(changes, { indent = true }))
     for _, change in pairs(changes) do
-        if change == false then
+        if change == false or BACK_ITEMS[change.name] then
+            print('will update')
             return true
-        end
-        if change then
-            return BACK_ITEMS[change.name]
         end
     end
     return false
@@ -251,5 +250,5 @@ end
 
 AddEventHandler('ox_inventory:updateInventory', function(changes)
     if not shouldUpdate(changes) then return end
-    TriggerServerEvent('backItems:onUpdateInventory')
+    TriggerServerEvent('backItems:onUpdateInventory', cache.weapon)
 end)
