@@ -238,10 +238,9 @@ RegisterNetEvent("backItems:RemoveItemsOnDropped", function(serverId)
 end)
 
 local function shouldUpdate(changes)
-    print(json.encode(changes, { indent = true }))
+    local weapon = exports.ox_inventory:getCurrentWeapon()
     for _, change in pairs(changes) do
-        if change == false or BACK_ITEMS[change.name] then
-            print('will update')
+        if change.slot ~= weapon.slot and (change == false or BACK_ITEMS[change.name]) then
             return true
         end
     end
