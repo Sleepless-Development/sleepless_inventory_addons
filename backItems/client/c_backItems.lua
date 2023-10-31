@@ -240,7 +240,7 @@ end)
 local function shouldUpdate(changes)
     local weapon = exports.ox_inventory:getCurrentWeapon()
     for _, change in pairs(changes) do
-        if change.slot ~= weapon.slot and (change == false or BACK_ITEMS[change.name]) then
+        if (change.slot ~= weapon.slot and BACK_ITEMS[change.name]) or change == false then
             return true
         end
     end
