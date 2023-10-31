@@ -219,6 +219,7 @@ end)
 lib.onCache("vehicle", function(vehicle)
     if vehicle then
         if IsThisModelABike(GetEntityModel(vehicle)) then return end
+        print('hide all')
         hideAllBackItems(true)
     else
         hideAllBackItems(false)
@@ -240,7 +241,7 @@ end)
 local function shouldUpdate(changes)
     local weapon = exports.ox_inventory:getCurrentWeapon()
     for _, change in pairs(changes) do
-        if (change.slot ~= weapon.slot and BACK_ITEMS[change.name]) or change == false then
+        if change == false or (type(change) == 'table' and change.slot ~= weapon?.slot and BACK_ITEMS[change.name]) then
             return true
         end
     end

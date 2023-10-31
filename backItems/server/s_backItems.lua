@@ -69,6 +69,12 @@ local function generateNewBackItems(source, weapon)
     end)
 end
 
+AddStateBagChangeHandler('hideAllBackItems', '', function(bagName, key, value, reserved, replicated)
+    local source = GetPlayerFromStateBagName(bagName)
+    local weapon = exports.ox_inventory:GetCurrentWeapon(source)
+    generateNewBackItems(source, weapon)
+end)
+
 AddEventHandler("playerDropped", function()
     local source = source
     TriggerClientEvent("backItems:RemoveItemsOnDropped", -1, source)
