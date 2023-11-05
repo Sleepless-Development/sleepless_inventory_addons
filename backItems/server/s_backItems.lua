@@ -57,8 +57,7 @@ local function generateNewBackItems(source, weapon)
                     potentialBackItems[i].prio = -1
                     table.insert(newBackItems, backItemData)
                 else
-                    print(("[ERROR]: ignore limits was set for %s, but customPos was nil."):format(potentialBackItems[i]
-                        .name))
+                    print(("[ERROR]: ignore limits was set for %s, but customPos was nil."):format(potentialBackItems[i].name))
                 end
             end
         end

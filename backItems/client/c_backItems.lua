@@ -8,8 +8,7 @@ local function deleteBackItems(serverId)
             DeleteEntity(playerBackSlots[serverId][i].obj)
             playerBackSlots[serverId][i].obj = nil
         end
-        playerBackSlots[serverId][i] = BACK_ITEM_SLOTS_DEFAULT[i] and lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT[i]) or
-            nil
+        playerBackSlots[serverId][i] = BACK_ITEM_SLOTS_DEFAULT[i] and lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT[i]) or nil
     end
 end
 
@@ -50,8 +49,7 @@ local function createWeapon(serverId, i)
 
     lib.requestWeaponAsset(slotData.backData.hash, 2000, 31, 0)
     local coords = GetEntityCoords(cache.ped)
-    playerBackSlots[serverId][i].obj = CreateWeaponObject(slotData.backData.hash, 0, coords.x, coords.y, coords.z, false,
-        1.0, false)
+    playerBackSlots[serverId][i].obj = CreateWeaponObject(slotData.backData.hash, 0, coords.x, coords.y, coords.z, false, 1.0, false)
 
     SetEntityCollision(playerBackSlots[serverId][i].obj, false, false)
 end
@@ -134,6 +132,8 @@ CreateThread(function()
                         if DoesEntityExist(backItem) and not IsEntityAttachedToEntity(backItem, targetPed) then
                             attachItemToPlayer(serverId, i, targetPed)
                         end
+                    else
+                        deleteBackItems(serverId)
                     end
                 end
             end
