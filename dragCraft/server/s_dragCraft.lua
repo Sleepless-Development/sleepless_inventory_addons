@@ -17,14 +17,14 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
 
         local amount1 = recipe.costs[fromSlot.name].need
         if amount1 > ox_inventory:GetItem(data.source, fromSlot.name, nil, true) then
-            local description = ("Not enough %s. Need %d"):format(fromSlot.label, recipe.costs[fromSlot.name])
+            local description = ("Not enough %s. Need %d"):format(fromSlot.label, amount1)
             TriggerClientEvent('ox_lib:notify', data.source, { type = 'error', description = description })
             return false
         end
 
         local amount2 = recipe.costs[toSlot.name].need
         if amount2 > ox_inventory:GetItem(data.source, toSlot.name, nil, true) then
-            local description = ("Not enough %s. Need %d"):format(toSlot.label, recipe.costs[toSlot.name])
+            local description = ("Not enough %s. Need %d"):format(toSlot.label, amount2)
             TriggerClientEvent('ox_lib:notify', data.source, { type = 'error', description = description })
             return false
         end
