@@ -74,7 +74,15 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unu
     lib.requestAnimDict(propData.dictionary, 1000)
 
     if propData.walkOnly then
-        SetPlayerSprint(cache.playerId, false)
+        local controls = {21, 22}
+        lib.disableControls:Add(controls)
+        CreateThread(function()
+            while currentCarryObject do
+                lib.disableControls()
+                Wait(1)
+            end
+            lib.disableControls:Remove(controls)
+        end)
     end
 
     while currentCarryObject do
