@@ -9,15 +9,17 @@ To add a new entry to the `CARRY_ITEMS` table in your Lua script, follow the str
 ```lua
 CARRY_ITEMS = {
     ['item_name'] = {
-        animation = 'idle',
         dictionary = 'animation_dictionary',
-        animationFlag = animation_flag,
+        animation = 'idle',
+        walkOnly = true,
+        blockVehicle = true,
+        flag = 51,
         prop = {
-            bone = bone_id,
-            model = 'prop_model',
+            bone = 60309,
+            model = joaat('hei_prop_heist_box'),
             placement = {
-                pos = vector3(x_pos, y_pos, z_pos),
-                rot = vector3(x_rot, y_rot, z_rot),
+                pos = vector3(0.025000, 0.080000, 0.255000),
+                rot = vector3(-145.000000, 290.000000, 0.000000),
             },
         },
     },
@@ -25,12 +27,15 @@ CARRY_ITEMS = {
 ```
 
 - `item_name`: The name of the inventory item. This will be used as the key in the `CARRY_ITEMS` table. NOTE: CARRY ITEMS SHOULD NOT STACK
-- `animation_dictionary`: The name of the animation dictionary associated with the item.
-- `animation_flag?`: The animation flag value for the item. This determines the behavior of the item when carried.
+- `dictionary`: The name of the animation dictionary associated with the item.
+- `walkOnly?`: weather or not you want the player to only be able to walk while carrying this item.
+- `walkOnly?`: weather or not you want the player to not be able to get in a vehicle with this item.
+- `animation`: The name of the animation associated with the item.
+- `flag?`: The animation flag value for the item. This determines the behavior of the item when carried.
 - `bone_id`: The bone ID on the player's character model where the prop will be attached.
 - `prop_model`: The model name of the prop that represents the item.
-- `x_pos`, `y_pos`, `z_pos`: The position coordinates (in meters) relative to the bone where the prop will be placed.
-- `x_rot`, `y_rot`, `z_rot`: The rotation angles (in degrees) for the prop in the X, Y, and Z axes.
+- `pos`: The position coordinates relative to the bone where the prop will be placed.
+- `rot`: The rotation angles for the prop in the X, Y, and Z axes.
 
 Make sure to maintain the indentation and syntax rules of the existing `CARRY_ITEMS` table for consistency.
 

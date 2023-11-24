@@ -73,16 +73,23 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unu
 
     lib.requestAnimDict(propData.dictionary, 1000)
 
+    if propData.walkOnly then
+        SetPlayerSprint(cache.playerId, false)
+    end
+
     while currentCarryObject do
-        if DoesEntityExist(GetVehiclePedIsTryingToEnter(cache.ped)) then
+        if propData.blockVehicle and DoesEntityExist(GetVehiclePedIsTryingToEnter(cache.ped)) then
             ClearPedTasks(cache.ped)
         end
-        if not IsEntityPlayingAnim(cache.ped, propData.dictionary, propData.animation, 3) then ---@todo may need to add dead checks and other things here as well
-            TaskPlayAnim(cache.ped, propData.dictionary, propData.animation, 2.0, 2.0, -1, propData.flag, 0, false, false,
-                false)
+
+        if not IsEntityPlayingAnim(cache.ped, propData.dictionary, propData.animation, 3) and not LocalPlayer.state.isdead and not LocalPlayer.state.isDead then ---@todo may need to add dead checks and other things here as well
+            TaskPlayAnim(cache.ped, propData.dictionary, propData.animation, 2.0, 2.0, -1, propData.flag, 0, false, false, false)
         end
+
         Wait(100)
     end
+
+    SetPlayerSprint(cache.playerId, true)
 end)
 
 
