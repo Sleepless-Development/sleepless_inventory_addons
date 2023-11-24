@@ -1,6 +1,6 @@
 local ox_inventory = exports.ox_inventory
 
-local createCarryHook = ox_inventory:registerHook('createItem', function(payload)
+ox_inventory:registerHook('createItem', function(payload)
 
       local carryData = CARRY_ITEMS[payload?.item?.name]
       local plyid = type(payload.inventoryId) == "number" and payload.inventoryId
@@ -25,6 +25,26 @@ local createCarryHook = ox_inventory:registerHook('createItem', function(payload
         end)
     end
 
+end, {})
+
+ox_inventory:registerHook('swapItems', function(payload)
+    if payload.toInventory ~= payload.fromInventory and payload.toInventory == payload.source then
+        local item = payload.fromSlot
+        local carryData = CARRY_ITEMS[item.name]
+
+        if carryData then
+            local plyState = Player(payload.source).state
+
+            if plyState.carryItem then
+                lib.notify(payload.source, {
+                    title = 'Inventory',
+                    description = 'You are already carrying something!',
+                    type = 'error'
+                })
+                 return false
+            end
+        end
+    end
 end, {})
 
 local function findCarryItem(source)
