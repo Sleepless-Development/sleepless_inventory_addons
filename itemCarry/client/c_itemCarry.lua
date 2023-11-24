@@ -86,8 +86,15 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unu
     end
 
     while currentCarryObject do
-        if propData.blockVehicle and DoesEntityExist(GetVehiclePedIsTryingToEnter(cache.ped)) then
-            ClearPedTasks(cache.ped)
+        if propData.blockVehicle then
+            if DoesEntityExist(GetVehiclePedIsTryingToEnter(cache.ped)) then
+                ClearPedTasks(cache.ped)
+            end
+
+            if IsPedInAnyVehicle(cache.ped, false) then
+                ClearPedTasksImmediately(cache.ped)
+            end
+
         end
 
         if not IsEntityPlayingAnim(cache.ped, propData.dictionary, propData.animation, 3) and not LocalPlayer.state.isdead and not LocalPlayer.state.isDead then ---@todo may need to add dead checks and other things here as well
