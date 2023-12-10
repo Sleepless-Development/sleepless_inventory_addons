@@ -53,7 +53,7 @@ jobs:
         run: |
           mkdir -p ./temp/ox_inventory_addons
           cp ./{LICENSE,README.md,fxmanifest.lua} ./temp/ox_inventory_addons
-          cp -r ./{client,compatability,config,server} ./temp/ox_inventory_addons
+          cp -r ./{backItems,dragCraft,itemCarry} ./temp/ox_inventory_addons
           cd ./temp && zip -r ../ox_inventory_addons.zip ./ox_inventory_addons
 
       - name: Create Release
