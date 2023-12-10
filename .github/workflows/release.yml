@@ -63,7 +63,7 @@ jobs:
           repo_token: '${{ secrets.GITHUB_TOKEN }}'
           title: ${{ env.RELEASE_VERSION }}
           prerelease: false
-          files: ox_inventory_addons.zip
+          files: Renewed-Weathersync.zip
 
         env:
           CI: false
