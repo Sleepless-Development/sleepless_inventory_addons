@@ -1,16 +1,14 @@
-# Based off of https://github.com/overextended/ox_lib/blob/master/.github/workflows/release.yml
 name: Release
 
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   workflow_dispatch:
-
 
 jobs:
   create-release:
-    name: Build and Create Tagged Release
+    name: Create Tagged Release
     runs-on: ubuntu-latest
     steps:
       - name: Install archive tools
@@ -42,7 +40,7 @@ jobs:
           push: true
           author_name: Manifest Bumper
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
-          message: 'chore: bump manifest version to ${{ github.ref_name }}'
+          message: "chore: bump manifest version to ${{ github.ref_name }}"
 
       - name: Update tag ref
         uses: EndBug/latest-tag@latest
@@ -52,18 +50,18 @@ jobs:
       - name: Bundle files
         run: |
           mkdir -p ./temp/ox_inventory_addons
-          cp ./{LICENSE,README.md,fxmanifest.lua} ./temp/ox_inventory_addons
+          cp ./{LICENSE,README.md,fxmanifest.lua,version.lua} ./temp/ox_inventory_addons
           cp -r ./{backItems,dragCraft,itemCarry} ./temp/ox_inventory_addons
           cd ./temp && zip -r ../ox_inventory_addons.zip ./ox_inventory_addons
 
       - name: Create Release
-        uses: 'marvinpinto/action-automatic-releases@v1.2.1'
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
         id: auto_release
         with:
-          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           title: ${{ env.RELEASE_VERSION }}
           prerelease: false
-          files: Renewed-Weathersync.zip
+          files: ox_inventory_addons.zip
 
         env:
           CI: false
