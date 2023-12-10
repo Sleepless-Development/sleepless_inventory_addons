@@ -12,9 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Cleanup workspace
-        run: rm -rf *
-
       - name: Install archive tools
         run: sudo apt install zip
 
@@ -28,7 +25,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16.x'
-          cache: 'none' # Explicitly disable caching
 
       - name: Set env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
