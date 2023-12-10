@@ -1,15 +1,17 @@
+# Based off of https://github.com/overextended/ox_lib/blob/master/.github/workflows/release.yml
 name: Release
 
 on:
   push:
     tags:
-      - "v*.*.*"
+      - 'v*.*.*'
+  workflow_dispatch:
+
 
 jobs:
   create-release:
-    name: Build and Create Tagged release
+    name: Build and Create Tagged Release
     runs-on: ubuntu-latest
-
     steps:
       - name: Install archive tools
         run: sudo apt install zip
@@ -20,33 +22,13 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.repository.default_branch }}
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 8.1.1
-
-      - name: Get variables
-        id: get_vars
-        run: |
-          echo '::set-output name=SHORT_SHA::$(git rev-parse --short HEAD)'
-          echo '::set-output name=DATE::$(date +'%D')'
-
       - name: Setup node
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
-          cache: "pnpm"
-          cache-dependency-path: "web/pnpm-lock.yaml"
 
-      - name: Install dependencies
-        run: pnpm i --frozen-lockfile
-        working-directory: web
-
-      - name: Run build
-        run: pnpm build
-        working-directory: web
-        env:
-          CI: false
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Bump manifest version
         run: node .github/actions/bump-manifest-version.js
@@ -60,7 +42,7 @@ jobs:
           push: true
           author_name: Manifest Bumper
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
-          message: "chore: bump manifest version to ${{ github.ref_name }}"
+          message: 'chore: bump manifest version to ${{ github.ref_name }}'
 
       - name: Update tag ref
         uses: EndBug/latest-tag@latest
@@ -70,20 +52,16 @@ jobs:
       - name: Bundle files
         run: |
           mkdir -p ./temp/ox_inventory_addons
-          mkdir -p ./temp/ox_inventory_addons/web
-          cp ./{server.lua,README.md,LICENSE,fxmanifest.lua,client.lua,init.lua} ./temp/ox_inventory_addons
-          cp -r ./{setup,modules,data,locales} ./temp/ox_inventory_addons
-          cp -r ./web/build ./temp/ox_inventory_addons/web/build
-          cp ./web/LICENSE ./temp/ox_inventory_addons/web/build
-          cp -r ./web/images ./temp/ox_inventory_addons/web/images
+          cp ./{LICENSE,README.md,fxmanifest.lua} ./temp/ox_inventory_addons
+          cp -r ./{client,compatability,config,server} ./temp/ox_inventory_addons
           cd ./temp && zip -r ../ox_inventory_addons.zip ./ox_inventory_addons
 
       - name: Create Release
-        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        uses: 'marvinpinto/action-automatic-releases@v1.2.1'
         id: auto_release
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          title: "${{ env.RELEASE_VERSION }}"
+          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          title: ${{ env.RELEASE_VERSION }}
           prerelease: false
           files: ox_inventory_addons.zip
 
