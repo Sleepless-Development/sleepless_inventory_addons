@@ -1,5 +1,18 @@
-RegisterNetEvent('demi-dragCraft:Craft', function(duration)
+RegisterNetEvent('dragCraft:Craft', function(duration, index)
+    local recipe = RECIPES[index]
+
+    if not recipe then return end
     TriggerServerEvent('ox_inventory:closeInventory')
+
+    ---@type boolean | nil
+    local continue
+
+    if recipe.client.before then
+        continue = recipe.client.before(recipe)
+    end
+
+    if continue == false then return end
+
     local result = lib.progressCircle({
         duration = duration,
         label = 'Crafting...',
@@ -15,6 +28,11 @@ RegisterNetEvent('demi-dragCraft:Craft', function(duration)
         },
     })
 
-    lib.callback('demi-dragCraft:success', false, function()
-    end, result)
+    TriggerServerEvent('dragCraft:success', result, recipe)
+
+    if result then
+        if recipe.client.after then
+            recipe.client.after(recipe)
+        end
+    end
 end)

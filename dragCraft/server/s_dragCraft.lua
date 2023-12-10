@@ -1,5 +1,21 @@
+---@class CraftItem
+---@field name string The name of the item.
+---@field amount number The amount of the item involved in the craft.
+---@field remove boolean Whether the item should be removed after the crafting process.
+---@field slot number The slot number of the item in the inventory.
+
+---@class CraftResult
+---@field name string The name of the resulting item.
+---@field amount number The amount of the resulting item.
+
+---@class CraftQueueEntry
+---@field item1 CraftItem Information about the first item used in crafting.
+---@field item2 CraftItem Information about the second item used in crafting.
+---@field result CraftResult[] The result of the crafting process.
+
 local ox_inventory = exports.ox_inventory
 
+---@type table<number, CraftQueueEntry>
 local CraftQueue = {}
 
 local craftHook = ox_inventory:registerHook('swapItems', function(data)
@@ -9,7 +25,8 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
     if type(fromSlot) == "table" and type(toSlot) == "table" then
         if fromSlot.name == toSlot.name then return end
 
-        local recipeIndex = (RECIPES[fromSlot.name .. " " .. toSlot.name] and fromSlot.name .. " " .. toSlot.name) or (RECIPES[toSlot.name .. " " .. fromSlot.name] and toSlot.name .. " " .. fromSlot.name) or nil
+        local recipeIndex = (RECIPES[fromSlot.name .. " " .. toSlot.name] and fromSlot.name .. " " .. toSlot.name) or
+        (RECIPES[toSlot.name .. " " .. fromSlot.name] and toSlot.name .. " " .. fromSlot.name) or nil
 
         if not recipeIndex then return end
 
@@ -55,64 +72,67 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
             result = resultForQueue
         }
 
-        TriggerClientEvent('demi-dragCraft:Craft', data.source, recipe.duration)
+        ---@type boolean | nil
+        local continue = nil
+
+        if recipe.client.before then
+            continue = recipe.client.before(recipe)
+        end
+
+        if continue == false then return false end
+
+        TriggerClientEvent('dragCraft:Craft', data.source, recipe.duration, recipeIndex)
 
         return false
     end
 end, {})
 
+---@param source number player server id
+---@param craftItem CraftItem
+local function updateItemDurability(source, craftItem)
+    local item = ox_inventory:GetSlot(source, craftItem.slot)
+    if not item then return end
 
+    local durability = item.metadata?.durability or 100
+    durability = durability - (100 * craftItem.amount)
 
+    if durability <= 0 then
+        ox_inventory:RemoveItem(source, craftItem.name, 1, nil, item.slot)
+    else
+        ox_inventory:SetDurability(source, item.slot, durability)
+    end
+end
 
-lib.callback.register('demi-dragCraft:success', function(source, success)
+---@param source number player server id
+---@param craftItem CraftItem
+local function processCraftItem(source, craftItem)
+    if not craftItem.remove then return end
+
+    if craftItem.amount > 0 and craftItem.amount < 1 then
+        updateItemDurability(source, craftItem)
+    else
+        ox_inventory:RemoveItem(source, craftItem.name, craftItem.amount)
+    end
+end
+
+---@param success boolean
+---@param recipe CraftRecipe
+RegisterNetEvent('dragCraft:success', function(success, recipe)
+    local source = source --[[@as number]]
     local queuedCraft = CraftQueue[source]
-
     if not queuedCraft then return end
 
     if success then
-        if queuedCraft.item1.remove then
-            if queuedCraft.item1.amount > 0 and queuedCraft.item1.amount < 1 then
-                local item = ox_inventory:GetSlot(source, queuedCraft.item1.slot)
+        processCraftItem(source, queuedCraft.item1)
+        processCraftItem(source, queuedCraft.item2)
 
-                if item then
-                    local durability = item.metadata?.durability or 100
-
-                    durability = durability - (100 * queuedCraft.item1.amount)
-
-                    if durability <= 0 then
-                        ox_inventory:RemoveItem(source, queuedCraft.item1.name, 1, nil, item.slot)
-                    else
-                        ox_inventory:SetDurability(source, item.slot, durability)
-                    end
-                end
-
-            else
-                ox_inventory:RemoveItem(source, queuedCraft.item1.name, queuedCraft.item1.amount)
-            end
-        end
-        if queuedCraft.item2.remove then
-            if queuedCraft.item2.amount > 0 and queuedCraft.item2.amount < 1 then
-                local item = ox_inventory:GetSlot(source, queuedCraft.item2.slot)
-
-                if item then
-                    local durability = item.metadata?.durability or 100
-
-                    durability = durability - (100 * queuedCraft.item2.amount)
-
-                    if durability <= 0 then
-                        ox_inventory:RemoveItem(source, queuedCraft.item2.name, 1, nil, item.slot)
-                    else
-                        ox_inventory:SetDurability(source, item.slot, durability)
-                    end
-                end
-
-            else
-                ox_inventory:RemoveItem(source, queuedCraft.item2.name, queuedCraft.item2.amount)
-            end
-        end
         for i = 1, #queuedCraft.result do
             local resultData = queuedCraft.result[i]
             ox_inventory:AddItem(source, resultData.name, resultData.amount)
+        end
+
+        if recipe.client.after then
+            recipe.client.after(recipe)
         end
     end
 
