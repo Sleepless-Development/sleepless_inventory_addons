@@ -1,9 +1,9 @@
 ---@diagnostic disable: missing-return
 
 ---@class CraftRecipe
----@field duration number The amount of time in milliseconds it takes to craft the recipe.
----@field client CallbackFunc Contains client-side functions to be executed before and after crafting.
----@field server CallbackFunc Contains server-side functions to be executed before and after crafting.
+---@field duration number ms it takes to craft the recipe.
+---@field client? CallbackFunc Contains client-side functions to be executed before and after crafting.
+---@field server? CallbackFunc Contains server-side functions to be executed before and after crafting.
 ---@field result ItemResult[] The items produced as a result of the crafting process.
 ---@field costs table<string, CraftCost> The resources required for crafting, including their quantities and removal flags.
 

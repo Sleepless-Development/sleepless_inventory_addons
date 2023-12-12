@@ -13,6 +13,10 @@ BACK_ITEMS  = {
         prio = 3,
         hash = joaat('WEAPON_CARBINERIFLE')
     },
+    ['WEAPON_SNIPERRIFLE'] = {
+        prio = 3,
+        hash = joaat('WEAPON_SNIPERRIFLE')
+    },
     ['WEAPON_COMPACTRIFLE'] = {
         prio = 2,
         hash = joaat('WEAPON_COMPACTRIFLE'),

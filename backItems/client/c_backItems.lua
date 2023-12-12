@@ -219,7 +219,6 @@ end)
 lib.onCache("vehicle", function(vehicle)
     if vehicle then
         if IsThisModelABike(GetEntityModel(vehicle)) then return end
-        print('hide all')
         hideAllBackItems(true)
     else
         hideAllBackItems(false)

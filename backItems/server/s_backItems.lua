@@ -1,7 +1,6 @@
 local function getPotentialBackItems(source, playerItems, hideall, weapon)
     if type(playerItems) ~= "table" then return {} end
     local potentialBackItems = {}
-    Wait(300)
     local currentWeapon = exports.ox_inventory:GetCurrentWeapon(source)
 
     for _, item in pairs(playerItems) do
@@ -70,8 +69,7 @@ end
 
 AddStateBagChangeHandler('hideAllBackItems', '', function(bagName, key, value, reserved, replicated)
     local source = GetPlayerFromStateBagName(bagName)
-    local weapon = exports.ox_inventory:GetCurrentWeapon(source)
-    generateNewBackItems(source, weapon)
+    generateNewBackItems(source)
 end)
 
 AddEventHandler("playerDropped", function()
