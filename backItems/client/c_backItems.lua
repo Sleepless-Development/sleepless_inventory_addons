@@ -251,4 +251,4 @@ end
 AddEventHandler('ox_inventory:updateInventory', function(changes)
     if not shouldUpdate(changes) then return end
     TriggerServerEvent('backItems:onUpdateInventory', cache.weapon)
-end)
+end) 
