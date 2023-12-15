@@ -49,7 +49,7 @@ local function createWeapon(serverId, i)
 
     lib.requestWeaponAsset(slotData.backData.hash, 2000, 31, 0)
     local coords = GetEntityCoords(cache.ped)
-    playerBackSlots[serverId][i].obj = CreateWeaponObject(slotData.backData.hash, 0, coords.x, coords.y, coords.z, false, 1.0, false)
+    playerBackSlots[serverId][i].obj = CreateWeaponObject(slotData.backData.hash, 0, coords.x, coords.y, coords.z, true, 1.0, false)
 
     SetEntityCollision(playerBackSlots[serverId][i].obj, false, false)
 end
@@ -68,9 +68,10 @@ end
 local function handleWeaponComponents(serverId, i)
     local slotData = playerBackSlots[serverId][i]
     local tryComponent = ("COMPONENT_%s_CLIP_01"):format(string.gsub(slotData.backData.name, "WEAPON_", "")) --[[@as number]]
+    local weapon = playerBackSlots[serverId][i].obj
     tryComponent = joaat(tryComponent)
     local componentModel = GetWeaponComponentTypeModel(tryComponent)
-    if componentModel ~= 0 and DoesEntityExist(playerBackSlots[serverId][i].obj) then
+    if componentModel ~= 0 and DoesEntityExist(playerBackSlots[serverId][i].obj) and not HasWeaponGotWeaponComponent(weapon, tryComponent) then
         lib.requestModel(componentModel, 2000)
         GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, tryComponent)
     end
