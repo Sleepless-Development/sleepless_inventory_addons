@@ -1,4 +1,11 @@
 INVENTORY_ITEMS = exports.ox_inventory:Items()
+SKINS = {}
+
+for k, v in pairs(INVENTORY_ITEMS) do
+    if v.type == 'skin' then
+        SKINS[#SKINS+1] = k
+    end
+end
 
 BACK_ITEM_SLOTS_DEFAULT = {
     [1] = { backData = false, defaultoffset = 0.12 },

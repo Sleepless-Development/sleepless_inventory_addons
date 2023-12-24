@@ -8,7 +8,8 @@ local function deleteBackItems(serverId)
             DeleteEntity(playerBackSlots[serverId][i].obj)
             playerBackSlots[serverId][i].obj = nil
         end
-        playerBackSlots[serverId][i] = BACK_ITEM_SLOTS_DEFAULT[i] and lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT[i]) or nil
+        playerBackSlots[serverId][i] = BACK_ITEM_SLOTS_DEFAULT[i] and lib.table.deepclone(BACK_ITEM_SLOTS_DEFAULT[i]) or
+        nil
     end
 end
 
@@ -49,7 +50,8 @@ local function createWeapon(serverId, i)
 
     lib.requestWeaponAsset(slotData.backData.hash, 2000, 31, 0)
     local coords = GetEntityCoords(cache.ped)
-    playerBackSlots[serverId][i].obj = CreateWeaponObject(slotData.backData.hash, 0, coords.x, coords.y, coords.z, true, 1.0, false)
+    playerBackSlots[serverId][i].obj = CreateWeaponObject(slotData.backData.hash, 0, coords.x, coords.y, coords.z, true,
+        1.0, false)
 
     SetEntityCollision(playerBackSlots[serverId][i].obj, false, false)
 end
@@ -64,36 +66,57 @@ local function createObject(serverId, i)
     SetEntityCollision(playerBackSlots[serverId][i].obj, false, false)
 end
 
+local function getSkinComponent(metadata)
+    for i = 1, #metadata do
+        local component = metadata[i]
+
+        if lib.table.contains(SKINS, component) then
+            table.remove(metadata, i)
+            return metadata, INVENTORY_ITEMS[component].client.component
+        end
+    end
+
+    return metadata
+end
+
 -- Function to handle weapon components
 local function handleWeaponComponents(serverId, i)
     local slotData = playerBackSlots[serverId][i]
-    local tryComponent = ("COMPONENT_%s_CLIP_01"):format(string.gsub(slotData.backData.name, "WEAPON_", "")) --[[@as number]]
-    local weapon = playerBackSlots[serverId][i].obj
-    tryComponent = joaat(tryComponent)
-    local componentModel = GetWeaponComponentTypeModel(tryComponent)
-    if componentModel ~= 0 and DoesEntityExist(playerBackSlots[serverId][i].obj) and not HasWeaponGotWeaponComponent(weapon, tryComponent) then
-        lib.requestModel(componentModel, 2000)
-        GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, tryComponent)
+    local modelSwap
+
+    if slotData.backData.attachments then
+        local compData, varMod = getSkinComponent(slotData.backData.attachments)
+
+        if varMod and next(varMod) then
+            for index = 1, #varMod do
+                local component = varMod[index]
+                if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
+                    modelSwap = GetWeaponComponentTypeModel(component)
+                    GiveWeaponComponentToWeaponObject(weaponObj, component)
+                end
+            end
+        end
+
+        for index = 1, #compData do
+            local components = INVENTORY_ITEMS[compData[index]].client.component
+            for v = 1, #components do
+                local component = components[v]
+                if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
+                    GiveWeaponComponentToWeaponObject(weaponObj, component)
+                end
+            end
+        end
     end
 
     if slotData.backData.tint then
         SetWeaponObjectTintIndex(playerBackSlots[serverId][i].obj, slotData.backData.tint)
     end
 
-    if slotData.backData.attachments then
-        for k = 1, #slotData.backData.attachments do
-            local components = INVENTORY_ITEMS[slotData.backData.attachments[k]].client.component
-            for v = 1, #components do
-                local component = components[v]
-                if DoesWeaponTakeWeaponComponent(slotData.backData.hash, component) then
-                    if not HasWeaponGotWeaponComponent(playerBackSlots[serverId][i].obj, component) and DoesEntityExist(playerBackSlots[serverId][i].obj) then
-                        local componentModel = GetWeaponComponentTypeModel(component)
-                        lib.requestModel(componentModel, 2000)
-                        GiveWeaponComponentToWeaponObject(playerBackSlots[serverId][i].obj, component)
-                    end
-                end
-            end
-        end
+    if modelSwap then
+        lib.requestModel(modelSwap, 1000)
+        local coords = GetEntityCoords(playerBackSlots[serverId][i].obj)
+        CreateModelSwap(coords.x, coords.y, coords.z, 0.1, GetEntityModel(playerBackSlots[serverId][i].obj), modelSwap)
+        SetModelAsNoLongerNeeded(modelSwap)
     end
 end
 
@@ -251,4 +274,4 @@ end
 AddEventHandler('ox_inventory:updateInventory', function(changes)
     if not shouldUpdate(changes) then return end
     TriggerServerEvent('backItems:onUpdateInventory', cache.weapon)
-end) 
+end)
