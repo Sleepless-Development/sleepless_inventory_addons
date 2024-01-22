@@ -1,50 +1,129 @@
-# Back Items
+# `backItems` 2.0
 
-## Configuration Variables
+## Overview
 
-The following configuration variables are defined:
+you can find the config in `backitems/config.lua`
 
-- `BACK_ITEM_LIMIT`: Specifies the maximum number of back items that can be equipped. The default value is `3`.
+The `backItems` module comprises two main configurations:
 
-- `BACK_ITEM_SLOTS_DEFAULT`: Defines the default settings for each back item slot. It is a table containing three entries, each representing a slot number. Each slot has the following properties:
-  - `backData`: Indicates whether back data is enabled for the slot (boolean value).
-  - `defaultoffset`: Specifies the default offset for the back item on the slot.
+1. **Default Slots Configuration (`defaultSlots`)**
+2. **Back Items Configuration (`BackItems`)**
 
-- `BACK_ITEMS`: Contains the configuration for various back items. Each back item is represented by a key-value pair. The key is a string representing the item's identifier, and the value is a table representing the item's properties. The available properties for each back item are as follows:
+### 1. Default Slots Configuration (`defaultSlots`)
 
-  - `prio` (mandatory): Specifies the priority of the item. Items with higher priority values will be take priority on being displayed.
+This configuration defines the default slots for item placement, each linked to a specific bone, position, and rotation.
 
-  - `ignoreLimits` (optional): Indicates whether the item should be exempted from the back item limit defined by `BACK_ITEM_LIMIT`. It is a boolean value.
+#### Slot Class Specification
 
-  - `hash`(mandatory): Specifies the hash value of the weapon or model.
+- `bone` (number): The ID of the bone where the slot is attached.
+- `pos` (vector3): The position vector (x, y, z) relative to the bone.
+- `rot` (vector3): The rotation vector (x, y, z) relative to the bone.
 
-  - `customPos` (optional, but mandatory when `ignoreLimits` is used): Contains custom position and rotation data for the item. It is a table with the following properties:
-    - `pos`: Specifies the position of the item as a vector3 (x, y, z).
-    - `rot`: Specifies the rotation of the item as a vector3 (x, y, z).
-    - `bone`: Specifies the bone to attach the item to (optional).
-    - `overrideDefaultZ`: Indicates whether to override the default Z position (optional).
+### 2. Back Items Configuration (`BackItems`)
 
-## Adding New Items
+This configuration outlines the properties and placement rules for back items.
 
-To add new items, follow the structure of the existing items in the `BACK_ITEMS` table. Here is an example of adding a new item with default values:
+#### BackItem Class Overview
+
+- `prio` (number): Sets the display priority of the item.
+- `group` (string, optional): Defines the slot group for the item, defaulting to 'back'.
+- `customPos` (table, optional): Specifies a custom position for the item, which includes:
+  - `bone` (number, optional): The bone ID for custom attachment. **Mandatory if `ignoreLimits` is utilized**.
+  - `pos` (vector3, optional): The custom position vector. **Mandatory if `ignoreLimits` is utilized**.
+  - `rot` (vector3, optional): The custom rotation vector. **Mandatory if `ignoreLimits` is utilized**.
+- `ignoreLimits` (boolean, optional): When true, the item attaches regardless of available slots. **Requires a full `customPos` setup**.
+- `model` (number, optional): Necessary for non-weapon items or alternative models for weapons.
+
+## Configuration Examples
+
+### Configuring Default Slots
+Define default slots in `Config.defaultSlots`. Example:
 
 ```lua
-['NEW_ITEM'] = {
-    prio = 1,
-    hash = joaat('model_or_weapon_hash'),
-    customPos = {
-        pos = vec3(0.0, 0.0, 0.0),
-        rot = vec3(0.0, 0.0, 0.0)
+Config.defaultSlots = {
+    ['back'] = {
+        { bone = 24818, pos = vec3(0.09, -0.16, 0.12), rot = vec3(0.0, 180.0, 0.0) },
+        ...
     }
 }
 ```
 
-In this example, we've added a new item called 'NEW_ITEM'. Here are the properties used:
+### Configuring Back Items
 
-- `prio`: The priority of the item is set to 1.
-- `hash`: We specify the model of the new item using the `hash` property. Replace `model_or_weapon_hash` with the appropriate hash value for the desired model or weapon.
-- `customPos`: We provide custom position and rotation data for the item. The `pos` property is set to the default position (0.0, 0.0, 0.0), and the `rot` property is set to the default rotation (0.0, 0.0, 0.0).
+- the **index** for the back items should be the same as the **item name** in the inventory
 
-You can modify the values of the properties based on your needs.
+#### Normal Weapon Back Item
+```lua
+Config.BackItems = {
+    ['WEAPON_CARBINERIFLE'] = {
+        prio = 3,
+        group = 'back'
+    },
+}
+```
 
-Save the changes and run the code with the new item configuration.
+#### Normal Non-Weapon Back Item
+```lua
+Config.BackItems = {
+    ['cone'] = {
+        prio = 3,
+        model = `prop_roadcone02a`,  -- Required model for non-weapons
+        group = 'back'
+    },
+}
+```
+
+#### Weapon Back Item with Alternative `model`
+```lua
+Config.BackItems = {
+    ['katana'] = {
+        prio = 3,
+        model = `sheathed_katana`,  -- Optional alternative model for weapons
+        group = 'back'
+    },
+}
+```
+
+#### Weapon Back Item with `customPos`
+```lua
+Config.BackItems = {
+    ['WEAPON_BAT'] = {
+        prio = 3,
+        group = 'back',
+        customPos = {
+            pos = { x = 0.4, y = -0.15 },
+            rot = { y = 270.0 }
+        }
+    },
+}
+```
+
+#### Back Item with `ignoreLimits`
+
+items with `ignoreLimits` will ALWAYS equip when in the inventory. they dont use a slot group or prio, but do require a complete customPos
+
+this is an example of a cone that gets put on your head
+
+```lua
+Config.BackItems = {
+    ['cone'] = {
+        ignoreLimits = true,
+        model = `prop_roadcone02a`,
+        customPos = {
+            bone = 12844,
+            pos = vec3(0.06, 0.0, 0.0),
+            rot = vec3(0.0, 90.0, 0.0)
+        }
+    }
+}
+```
+
+## Customization Guidance
+
+- Ensure correct bone IDs, positions, and rotations for desired item placements.
+- Use `ignoreLimits` only with a complete `customPos`.
+- The `model` field is required for non-weapon items or alternative weapon models.
+
+---
+
+This updated documentation aims to provide a clear and comprehensive guide for users to effectively configure the `backItems` module with a focus on special cases and requirements.

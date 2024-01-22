@@ -8,6 +8,15 @@ This resource enhances gameplay experience by providing several modules that uti
 
 The `backItems` module allows you to add items to a list that will appear attached to your character when the corresponding item is in your inventory.
 
+ - client objects synced via statebags
+ - full attachment and skin support
+ - persistent flashlights through item metadata
+ - supports alt models for weapons. i.e. katana weapon w/ sheath model on back
+ - supports non-weapon items as well. drugs, money, etc.
+ 
+
+#### thanks to [Zoo](https://github.com/FjamZoo) and others who worked on [Renewed-Weaponscarry](https://github.com/Renewed-Scripts/Renewed-Weaponscarry) I was able to use some things from here to write this module.
+
 [backItems.md](./backItems/backItems.md)
 
 ### dragCraft
