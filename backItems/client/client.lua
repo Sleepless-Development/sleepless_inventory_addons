@@ -1,6 +1,6 @@
-local CBackItem = require 'backItems.client.backitem'
-local CBackWeapon = require 'backItems.client.weapon'
-local Utils = require 'backItems.client.utils'
+local CBackItem = require 'backItems.imports.backitem'
+local CBackWeapon = require 'backItems.imports.weapon'
+local Utils = require 'backItems.imports.utils'
 local PlayerState = LocalPlayer.state
 
 SetFlashLightKeepOnWhileMoving(true)

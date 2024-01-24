@@ -20,6 +20,11 @@ client_scripts {
 	'**/client/*.lua',
 }
 
+files {
+	'**/config.lua',
+	'**/imports/*.lua'
+}
+
 dependencies {
 	'ox_lib',
 	'ox_inventory',

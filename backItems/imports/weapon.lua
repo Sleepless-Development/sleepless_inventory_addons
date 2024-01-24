@@ -1,5 +1,5 @@
-local CBackItem = require 'backItems.client.backitem'
-local Utils = require 'backItems.client.utils'
+local CBackItem = require 'backItems.imports.backitem'
+local Utils = require 'backItems.imports.utils'
 local ox_items = exports.ox_inventory:Items()
 
 --- @class CBackWeapon : CBackItem

@@ -1,4 +1,4 @@
-local Utils = require 'backItems.client.utils'
+local Utils = require 'backItems.imports.utils'
 
 --- @class ItemData
 --- @field name string The name of the item.
