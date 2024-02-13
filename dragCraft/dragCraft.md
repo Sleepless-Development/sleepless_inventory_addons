@@ -50,6 +50,66 @@ RECIPES = {
 }
 ```
 
+## export
+
+export is available on both the server and the client to register recipes externally
+
+note: when using this export, you may only register the hooks for the context you call it in. (client/server)
+
+### client
+
+```lua
+  exports.ox_inventory_addons:addRecipe('garbage scrapmetal', {
+    duration = 2000,
+    client = {
+      before = function(recipeData)
+        -- some client logic to run before crafting
+        -- if this returns false, it will cancel the craft
+        -- returning true or nil will continue with the craft
+      end,
+      after = function(recipeData)
+        -- some client logic to run after crafting
+        -- returns boolean or nil
+      end,
+    },
+    costs = {
+      ['garbage'] = { need = 1, remove = true },
+      ['scrapmetal'] = { need = 0.1, remove = true },
+    },
+    result = {
+      { name = 'lockpick', amount = 1 },
+      -- { name = 'something', amount = 1 }
+    },
+  })
+```
+
+### server
+
+```lua
+  exports.ox_inventory_addons:addRecipe('garbage scrapmetal', {
+    duration = 2000,
+    server = {
+      before = function(recipeData)
+        -- some server logic to run before crafting
+        -- if this returns false, it will cancel the craft
+        -- returning true or nil will continue with the craft
+      end,
+      after = function(recipeData)
+        -- some server logic to run after crafting
+        -- returns boolean or nil
+      end,
+    },
+    costs = {
+      ['garbage'] = { need = 1, remove = true },
+      ['scrapmetal'] = { need = 0.1, remove = true },
+    },
+    result = {
+      { name = 'lockpick', amount = 1 },
+      -- { name = 'something', amount = 1 }
+    },
+  })
+```
+
 ## Notes
 
 - Ensure that the item names used in the `RECIPES` table match the item names in `ox_inventory`.

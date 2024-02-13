@@ -14,6 +14,7 @@
 ---@field result CraftResult[] The result of the crafting process.
 
 local ox_inventory = exports.ox_inventory
+local RECIPES = require 'dragCraft.config'
 
 ---@type table<number, CraftQueueEntry>
 local CraftQueue = {}
@@ -24,12 +25,16 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
 
     if type(fromSlot) == "table" and type(toSlot) == "table" then
         if fromSlot.name == toSlot.name then return end
-
-        local recipeIndex = (RECIPES[fromSlot.name .. " " .. toSlot.name] and fromSlot.name .. " " .. toSlot.name) or
-        (RECIPES[toSlot.name .. " " .. fromSlot.name] and toSlot.name .. " " .. fromSlot.name) or nil
+        print(1)
+        local recipeKey = string.format("%s %s", fromSlot.name, toSlot.name)
+        local reverseRecipeKey = string.format("%s %s", toSlot.name, fromSlot.name)
+        print(2)
+        local recipeIndex = (RECIPES[recipeKey] and recipeKey) or
+            (RECIPES[reverseRecipeKey] and reverseRecipeKey) or nil
+        print(3)
 
         if not recipeIndex then return end
-
+        print(4)
         local recipe = RECIPES[recipeIndex]
 
         local amount1 = recipe.costs[fromSlot.name].need
@@ -38,7 +43,7 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
             TriggerClientEvent('ox_lib:notify', data.source, { type = 'error', description = description })
             return false
         end
-
+        print(5)
         local amount2 = recipe.costs[toSlot.name].need
         if amount2 > ox_inventory:GetItem(data.source, toSlot.name, nil, true) then
             local description = ("Not enough %s. Need %d"):format(toSlot.label, amount2)
@@ -55,7 +60,7 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
                 amount = resultData.amount
             }
         end
-
+        print(6)
         CraftQueue[data.source] = {
             item1 = {
                 name = fromSlot.name,
@@ -71,18 +76,20 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
             },
             result = resultForQueue
         }
-
+        print(7)
         ---@type boolean | nil
         local continue = nil
 
-        if recipe.client.before then
-            continue = recipe.client.before(recipe)
+        if recipe?.server?.before then
+            continue = recipe.server.before(recipe)
         end
+
+        print(8)
 
         if continue == false then return false end
 
         TriggerClientEvent('dragCraft:Craft', data.source, recipe.duration, recipeIndex)
-
+        print(9)
         return false
     end
 end, {})
@@ -131,10 +138,23 @@ RegisterNetEvent('dragCraft:success', function(success, recipe)
             ox_inventory:AddItem(source, resultData.name, resultData.amount)
         end
 
-        if recipe.client.after then
-            recipe.client.after(recipe)
+        if recipe?.server?.after then
+            recipe?.server?.after(recipe)
         end
     end
 
     CraftQueue[source] = nil
 end)
+
+
+local function addRecipe(source, id, recipe, sync)
+    recipe.client = nil
+    RECIPES[id] = recipe
+
+    if sync then return end
+
+    lib.callback.await('dragCraft:client:addRecipe', source, id, recipe, true)
+end
+
+lib.callback.register('dragCraft:server:addRecipe', addRecipe)
+exports('addRecipe', addRecipe)

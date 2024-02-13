@@ -1,3 +1,5 @@
+local RECIPES = require 'dragCraft.config'
+
 RegisterNetEvent('dragCraft:Craft', function(duration, index)
     local recipe = RECIPES[index]
 
@@ -36,3 +38,15 @@ RegisterNetEvent('dragCraft:Craft', function(duration, index)
         end
     end
 end)
+
+local function addRecipe(id, recipe, sync)
+    recipe.server = nil
+    RECIPES[id] = recipe
+
+    if sync then return end
+
+    lib.callback.await('dragCraft:server:addRecipe', false, id, recipe, true)
+end
+
+lib.callback.register('dragCraft:client:addRecipe', addRecipe)
+exports('addRecipe', addRecipe)
