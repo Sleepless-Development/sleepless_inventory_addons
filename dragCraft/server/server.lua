@@ -24,17 +24,15 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
     local toSlot = data.toSlot
 
     if type(fromSlot) == "table" and type(toSlot) == "table" then
+
         if fromSlot.name == toSlot.name then return end
-        print(1)
+
         local recipeKey = string.format("%s %s", fromSlot.name, toSlot.name)
         local reverseRecipeKey = string.format("%s %s", toSlot.name, fromSlot.name)
-        print(2)
-        local recipeIndex = (RECIPES[recipeKey] and recipeKey) or
-            (RECIPES[reverseRecipeKey] and reverseRecipeKey) or nil
-        print(3)
+        local recipeIndex = (RECIPES[recipeKey] and recipeKey) or (RECIPES[reverseRecipeKey] and reverseRecipeKey) or nil
 
         if not recipeIndex then return end
-        print(4)
+
         local recipe = RECIPES[recipeIndex]
 
         local amount1 = recipe.costs[fromSlot.name].need
@@ -43,7 +41,7 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
             TriggerClientEvent('ox_lib:notify', data.source, { type = 'error', description = description })
             return false
         end
-        print(5)
+
         local amount2 = recipe.costs[toSlot.name].need
         if amount2 > ox_inventory:GetItem(data.source, toSlot.name, nil, true) then
             local description = ("Not enough %s. Need %d"):format(toSlot.label, amount2)
@@ -60,7 +58,7 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
                 amount = resultData.amount
             }
         end
-        print(6)
+
         CraftQueue[data.source] = {
             item1 = {
                 name = fromSlot.name,
@@ -76,20 +74,18 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
             },
             result = resultForQueue
         }
-        print(7)
+
         ---@type boolean | nil
         local continue = nil
 
-        if recipe?.server?.before then
+        if recipe.server?.before then
             continue = recipe.server.before(recipe)
         end
-
-        print(8)
 
         if continue == false then return false end
 
         TriggerClientEvent('dragCraft:Craft', data.source, recipe.duration, recipeIndex)
-        print(9)
+
         return false
     end
 end, {})
@@ -138,8 +134,8 @@ RegisterNetEvent('dragCraft:success', function(success, recipe)
             ox_inventory:AddItem(source, resultData.name, resultData.amount)
         end
 
-        if recipe?.server?.after then
-            recipe?.server?.after(recipe)
+        if recipe.server?.after then
+            recipe.server?.after(recipe)
         end
     end
 
