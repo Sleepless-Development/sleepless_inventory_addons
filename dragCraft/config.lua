@@ -21,39 +21,39 @@
 
 ---@type table<string, CraftRecipe>
 RECIPES = {
-    -- ['garbage scrapmetal'] = {
-    --     duration = 2000,
-    --     client = {
-    --         before = function(recipeData)
-    --             -- some client logic to run before crafting
-    --             -- if this returns false, it will cancel the craft
-    --             -- returning true or nil will continue with the craft
-    --         end,
-    --         after = function(recipeData)
-    --             -- some client logic to run after crafting
-    --             -- returns boolean or nil
-    --         end,
-    --     },
-    --     server = {
-    --         before = function(recipeData)
-    --             -- some server logic to run before crafting
-    --             -- if this returns false, it will cancel the craft
-    --             -- returning true or nil will continue with the craft
-    --         end,
-    --         after = function(recipeData)
-    --             -- some server logic to run after crafting
-    --             -- returns boolean or nil
-    --         end,
-    --     },
-    --     costs = {
-    --         ['garbage'] = { need = 1, remove = true },
-    --         ['scrapmetal'] = { need = 0.1, remove = true },
-    --     },
-    --     result = {
-    --         { name = 'lockpick', amount = 1 },
-    --         -- { name = 'something', amount = 1 }
-    --     },
-    -- },
+    ['garbage scrapmetal'] = {
+        duration = 2000,
+        client = {
+            before = function(recipeData)
+                -- some client logic to run before crafting
+                -- if this returns false, it will cancel the craft
+                -- returning true or nil will continue with the craft
+            end,
+            after = function(recipeData)
+                -- some client logic to run after crafting
+                -- returns boolean or nil
+            end,
+        },
+        server = {
+            before = function(recipeData)
+                -- some server logic to run before crafting
+                -- if this returns false, it will cancel the craft
+                -- returning true or nil will continue with the craft
+            end,
+            after = function(recipeData)
+                -- some server logic to run after crafting
+                -- returns boolean or nil
+            end,
+        },
+        costs = {
+            ['garbage'] = { need = 1, remove = true },
+            ['scrapmetal'] = { need = 0.1, remove = true },
+        },
+        result = {
+            { name = 'lockpick', amount = 1 },
+            -- { name = 'something', amount = 1 }
+        },
+    },
     -- Additional recipes can be added here
 }
 
