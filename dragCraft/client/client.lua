@@ -9,7 +9,7 @@ RegisterNetEvent('dragCraft:Craft', function(duration, index)
     ---@type boolean | nil
     local continue
 
-    if recipe.client.before then
+    if recipe.client?.before then
         continue = recipe.client.before(recipe)
     end
 
@@ -33,7 +33,7 @@ RegisterNetEvent('dragCraft:Craft', function(duration, index)
     TriggerServerEvent('dragCraft:success', result, recipe)
 
     if result then
-        if recipe.client.after then
+        if recipe.client?.after then
             recipe.client.after(recipe)
         end
     end
