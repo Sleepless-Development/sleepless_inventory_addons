@@ -31,15 +31,9 @@ local function createBackItemsForPlayer(playerId, backItems)
     for i = 1, #backItems do
         local itemData = backItems[i]
         if itemData.isWeapon then
-            Players[playerId][#Players[playerId] + 1] = CBackWeapon:new({
-                playerId = playerId,
-                itemData = itemData
-            })
+            Players[playerId][#Players[playerId] + 1] = CBackWeapon:new(playerId, itemData)
         else
-            Players[playerId][#Players[playerId] + 1] = CBackItem:new({
-                playerId = playerId,
-                itemData = itemData
-            })
+            Players[playerId][#Players[playerId] + 1] = CBackItem:new(playerId, itemData)
         end
     end
 end

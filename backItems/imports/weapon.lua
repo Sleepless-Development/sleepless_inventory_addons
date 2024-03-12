@@ -3,13 +3,13 @@ local Utils = require 'backItems.imports.utils'
 local ox_items = exports.ox_inventory:Items()
 
 --- @class CBackWeapon : CBackItem
---- @field new fun(self, options: any)
---- @field init fun(self, playerId: number, itemData: ItemData)
---- @field create fun(self, model?: number)
---- @field getComponents fun(self, model?: number)
---- @field attachComponents fun(self)
---- @field checkVarMod fun(self)
---- @field hasFlashLight fun(self): boolean
+--- @field new fun(self: self, playerId: number, itemData: ItemData
+--- @field constructor fun(self: self, playerId: number, itemData: ItemData)
+--- @field create fun(self: self, model?: number)
+--- @field getComponents fun(self: self, model?: number)
+--- @field attachComponents fun(self: self)
+--- @field checkVarMod fun(self: self)
+--- @field hasFlashLight fun(self: self): boolean
 --- @field varMod number | nil
 --- @field hadClip boolean
 --- @field weaponComponents table<string | number>
@@ -17,11 +17,12 @@ local ox_items = exports.ox_inventory:Items()
 ---@type CBackWeapon
 local BackWeapon = lib.class('BackWeapon', CBackItem)
 
-function BackWeapon:constructor()
+function BackWeapon:constructor(playerId, itemData)
+    self:super(playerId, itemData)
+
     self:getComponents()
-    local item = self.itemData
-    
-    pcall(lib.requestWeaponAsset, item.hash, 10000, 31, 0)
+
+    pcall(lib.requestWeaponAsset, itemData.hash, 10000, 31, 0)
 
     if self.varMod and not HasModelLoaded(self.varMod) then
         Utils.loadModel(self.varMod)
@@ -33,22 +34,22 @@ function BackWeapon:constructor()
         showDefault = false
     end
 
-    self.object = CreateWeaponObject(item.hash, 0, 0.0, 0.0, 0.0, showDefault, 1.0, self.varMod or 0, false, false)
+    self.object = CreateWeaponObject(itemData.hash, 0, 0.0, 0.0, 0.0, showDefault, 1.0, self.varMod or 0, false, false)
 
     for i = 1, #self.weaponComponents do
         GiveWeaponComponentToWeaponObject(self.object, self.weaponComponents[i])
     end
 
-    if item.tint then
-        SetWeaponObjectTintIndex(self.object, item.tint)
+    if itemData.tint then
+        SetWeaponObjectTintIndex(self.object, itemData.tint)
     end
 
-    if item.flashlight then
+    if itemData.flashlight then
         SetCreateWeaponObjectLightSource(self.object, true)
         Wait(0)
     end
 
-    RemoveWeaponAsset(item.hash)
+    RemoveWeaponAsset(itemData.hash)
 
     self:attach()
 end
@@ -66,7 +67,7 @@ function BackWeapon:checkVarMod()
             for j = 1, #weaponComp do
                 local weaponComponent = weaponComp[j]
                 if DoesWeaponTakeWeaponComponent(self.itemData.hash, weaponComponent) then
-                    self.varMod =  GetWeaponComponentTypeModel(weaponComponent)
+                    self.varMod = GetWeaponComponentTypeModel(weaponComponent)
                 end
             end
         end

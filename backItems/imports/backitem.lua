@@ -19,34 +19,36 @@ local Utils = require 'backItems.imports.utils'
 --- @field playerId number
 --- @field object number | nil
 --- @field itemData ItemData
---- @field new fun(self, options: any)
---- @field init fun(self, playerId: number, itemData: ItemData)
---- @field create fun(self, model?: number)
---- @field attach fun(self)
---- @field destroy fun(self)
---- @field setVisible fun(self, toggle: boolean)
-
----@type CBackItem
+--- @field private table
+--- @field new fun(self: self, playerId: number, itemData: ItemData)
+--- @field constructor fun(self: self, playerId: number, itemData: ItemData)
+--- @field create fun(self: self, model?: number)
+--- @field attach fun(self: self)
+--- @field destroy fun(self: self)
+--- @field setVisible fun(self: self, toggle: boolean)
 local BackItem = lib.class('BackItem')
 
-function BackItem:constructor()
-    local item = self.itemData
+function BackItem:constructor(playerId, itemData)
+    self.private.playerId = playerId
+    self.itemData = itemData
 
-    pcall(lib.requestModel, item.model, 10000)
+    pcall(lib.requestModel, itemData.model, 10000)
 
-    self.object = CreateObject(item.model, 0.0, 0.0, 0.0, false, false, false)
-    SetModelAsNoLongerNeeded(item.model)
-    self:attach()
+    self.object = CreateObject(itemData.model, 0.0, 0.0, 0.0, false, false, false)
+    SetModelAsNoLongerNeeded(itemData.model)
+    if self:isClass(self, BackItem) then
+        self:attach()
+    end
 end
 
 function BackItem:attach()
-    local ped = GetPlayerPed(self.playerId)
+    local ped = GetPlayerPed(self.private.playerId)
     local item = self.itemData
     local object = self.object
     local customPos = item.customPos
 
     if item.ignoreLimits and not Utils.isCustomPosValid(customPos) then
-        print('^1 ERROR: item with ignoreLimits needs a custom Position^7', item.name)
+        lib.print.error('item with ignoreLimits needs a custom Position', item.name)
         self:destroy()
         return
     end
