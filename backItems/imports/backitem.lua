@@ -29,13 +29,11 @@ local Utils = require 'backItems.imports.utils'
 ---@type CBackItem
 local BackItem = lib.class('BackItem')
 
-function BackItem:init()
-    self:create()
-end
-
-function BackItem:create()
+function BackItem:constructor()
     local item = self.itemData
-    lib.requestModel(item.model, 1000)
+
+    pcall(lib.requestModel, item.model, 10000)
+
     self.object = CreateObject(item.model, 0.0, 0.0, 0.0, false, false, false)
     SetModelAsNoLongerNeeded(item.model)
     self:attach()

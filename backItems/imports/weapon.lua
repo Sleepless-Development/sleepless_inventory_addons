@@ -17,8 +17,40 @@ local ox_items = exports.ox_inventory:Items()
 ---@type CBackWeapon
 local BackWeapon = lib.class('BackWeapon', CBackItem)
 
-function BackWeapon:init()
-    self:create()
+function BackWeapon:constructor()
+    self:getComponents()
+    local item = self.itemData
+    
+    pcall(lib.requestWeaponAsset, item.hash, 10000, 31, 0)
+
+    if self.varMod and not HasModelLoaded(self.varMod) then
+        Utils.loadModel(self.varMod)
+    end
+
+    local showDefault = true
+
+    if self.varMod and self.hadClip then
+        showDefault = false
+    end
+
+    self.object = CreateWeaponObject(item.hash, 0, 0.0, 0.0, 0.0, showDefault, 1.0, self.varMod or 0, false, false)
+
+    for i = 1, #self.weaponComponents do
+        GiveWeaponComponentToWeaponObject(self.object, self.weaponComponents[i])
+    end
+
+    if item.tint then
+        SetWeaponObjectTintIndex(self.object, item.tint)
+    end
+
+    if item.flashlight then
+        SetCreateWeaponObjectLightSource(self.object, true)
+        Wait(0)
+    end
+
+    RemoveWeaponAsset(item.hash)
+
+    self:attach()
 end
 
 function BackWeapon:checkVarMod()
@@ -73,42 +105,6 @@ function BackWeapon:getComponents()
     end
 
     self.weaponComponents = weaponComponents
-end
-
-function BackWeapon:create()
-    self:getComponents()
-    local item = self.itemData
-
-    lib.requestWeaponAsset(item.hash, 1000, 31, 0)
-
-    if self.varMod and not HasModelLoaded(self.varMod) then
-        lib.requestModel(self.varMod, 500)
-    end
-
-    local showDefault = true
-
-    if self.varMod and self.hadClip then
-        showDefault = false
-    end
-
-    self.object = CreateWeaponObject(item.hash, 0, 0.0, 0.0, 0.0, showDefault, 1.0, self.varMod or 0, false, false)
-
-    for i = 1, #self.weaponComponents do
-        GiveWeaponComponentToWeaponObject(self.object, self.weaponComponents[i])
-    end
-
-    if item.tint then
-        SetWeaponObjectTintIndex(self.object, item.tint)
-    end
-
-    if item.flashlight then
-        SetCreateWeaponObjectLightSource(self.object, true)
-        Wait(0)
-    end
-
-    RemoveWeaponAsset(item.hash)
-
-    self:attach()
 end
 
 return BackWeapon
