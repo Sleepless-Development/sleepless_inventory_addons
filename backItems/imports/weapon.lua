@@ -13,12 +13,12 @@ local ox_items = exports.ox_inventory:Items()
 --- @field varMod number | nil
 --- @field hadClip boolean
 --- @field weaponComponents table<string | number>
-
----@type CBackWeapon
 local BackWeapon = lib.class('BackWeapon', CBackItem)
 
 function BackWeapon:constructor(playerId, itemData)
     self:super(playerId, itemData)
+
+    if itemData.model then return end
 
     self:getComponents()
 
@@ -34,7 +34,7 @@ function BackWeapon:constructor(playerId, itemData)
         showDefault = false
     end
 
-    self.object = CreateWeaponObject(itemData.hash, 0, 0.0, 0.0, 0.0, showDefault, 1.0, self.varMod or 0, false, false)
+    self.object = CreateWeaponObject(itemData.hash, 0, 0.0, 0.0, 0.0, showDefault, 1.0, self.varMod or 0)
 
     for i = 1, #self.weaponComponents do
         GiveWeaponComponentToWeaponObject(self.object, self.weaponComponents[i])

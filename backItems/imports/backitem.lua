@@ -15,7 +15,7 @@ local Utils = require 'backItems.imports.utils'
 --- @field ignoreLimits boolean Indicates whether the item should ignore attach limits.
 --- @field flashlight boolean
 
---- @class CBackItem
+--- @class CBackItem: OxClass
 --- @field playerId number
 --- @field object number | nil
 --- @field itemData ItemData
@@ -36,7 +36,7 @@ function BackItem:constructor(playerId, itemData)
 
     self.object = CreateObject(itemData.model, 0.0, 0.0, 0.0, false, false, false)
     SetModelAsNoLongerNeeded(itemData.model)
-    if self:isClass(self, BackItem) then
+    if self.isClass(self, BackItem) or itemData.model then
         self:attach()
     end
 end
