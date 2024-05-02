@@ -25,7 +25,7 @@ function BackWeapon:constructor(playerId, itemData)
     pcall(lib.requestWeaponAsset, itemData.hash, 10000, 31, 0)
 
     if self.varMod and not HasModelLoaded(self.varMod) then
-        Utils.loadModel(self.varMod)
+        pcall(lib.requestModel, self.varMod, 10000)
     end
 
     local showDefault = true
