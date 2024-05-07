@@ -1,4 +1,5 @@
 local ox_inventory = exports.ox_inventory
+local CARRY_ITEMS = require 'itemCarry.config'
 
 ox_inventory:registerHook('createItem', function(payload)
 

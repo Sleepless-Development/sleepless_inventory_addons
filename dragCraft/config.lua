@@ -20,7 +20,7 @@
 ---@field remove boolean Whether the item should be removed after crafting.
 
 ---@type table<string, CraftRecipe>
-RECIPES = {
+local RECIPES = {
     ['garbage scrapmetal'] = {
         duration = 2000,
         client = {
