@@ -50,10 +50,10 @@ jobs:
 
       - name: Bundle files
         run: |
-          mkdir -p ./temp/ox_inventory_addons
-          cp ./{LICENSE,README.md,fxmanifest.lua,version.lua} ./temp/ox_inventory_addons
-          cp -r ./{backItems,dragCraft,itemCarry} ./temp/ox_inventory_addons
-          cd ./temp && zip -r ../ox_inventory_addons.zip ./ox_inventory_addons
+          mkdir -p ./temp/sleepless_inventory_addons
+          cp ./{LICENSE,README.md,fxmanifest.lua,version.lua} ./temp/sleepless_inventory_addons
+          cp -r ./{backItems,dragCraft,itemCarry} ./temp/sleepless_inventory_addons
+          cd ./temp && zip -r ../sleepless_inventory_addons.zip ./sleepless_inventory_addons
 
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
@@ -62,7 +62,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           title: ${{ env.RELEASE_VERSION }}
           prerelease: false
-          files: ox_inventory_addons.zip
+          files: sleepless_inventory_addons.zip
 
         env:
           CI: false
