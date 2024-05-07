@@ -13,4 +13,4 @@ https://sleeplessdevelopment.dev
 
 ## 💾 Download
 
-[seleepless_interact.zip](https://github.com/Sleepless-Development/sleepless_inventory_addons/releases/latest/download/sleepless_inventory_addons.zip)
+[sleepless_inventory_addons.zip](https://github.com/Sleepless-Development/sleepless_inventory_addons/releases/latest/download/sleepless_inventory_addons.zip)
