@@ -1,6 +1,6 @@
 **THIS IS NOT AN OFFICIAL OVEREXTENDED SCRIPT**
 
-# ox_inventory_addons
+# sleepless_inventory_addons
 
 This resource enhances gameplay experience by providing several modules that utilize ox_inventory hooks. Each module adds unique features.
 
