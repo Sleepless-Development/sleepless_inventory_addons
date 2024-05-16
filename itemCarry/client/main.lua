@@ -25,13 +25,13 @@ AddEventHandler('onResourceStart', function(resourceName)
     end
 end)
 
-AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unused, replicated)
+AddStateBagChangeHandler("carryItem", nil, function(bagName, key, carryData, _unused, replicated)
     local ply = GetPlayerFromStateBagName(bagName)
     local plyPed = GetPlayerPed(ply)
 
     if ply == 0 or plyPed ~= cache.ped then return end
 
-    if propData == nil then
+    if carryData == nil then
         DeleteEntity(currentCarryObject)
         currentCarryObject = nil
         ClearPedTasks(cache.ped)
@@ -44,19 +44,19 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unu
     end
 
 
-    lib.requestModel(propData.prop.model)
+    lib.requestModel(carryData.prop.model)
 
     local plyPos = GetEntityCoords(cache.ped)
-    lib.requestModel(propData.prop.model, 1000)
-    currentCarryObject = CreateObject(propData.prop.model, plyPos.x, plyPos.y, plyPos.z + 0.2, true, true, true)
+    lib.requestModel(carryData.prop.model, 1000)
+    currentCarryObject = CreateObject(carryData.prop.model, plyPos.x, plyPos.y, plyPos.z + 0.2, true, true, true)
     SetEntityCollision(currentCarryObject, false, false)
 
-    local placement = propData.prop.placement
+    local placement = carryData.prop.placement
 
     AttachEntityToEntity(
         currentCarryObject,
         cache.ped,
-        GetPedBoneIndex(cache.ped, propData.prop.bone),
+        GetPedBoneIndex(cache.ped, carryData.prop.bone),
         placement.pos.x,
         placement.pos.y,
         placement.pos.z,
@@ -71,9 +71,9 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unu
         true
     )
 
-    lib.requestAnimDict(propData.dictionary, 1000)
+    lib.requestAnimDict(carryData.anim.dict, 1000)
 
-    if propData.walkOnly then
+    if carryData.walkOnly then
         local controls = {21, 22}
         lib.disableControls:Add(controls)
         CreateThread(function()
@@ -86,7 +86,7 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unu
     end
 
     while currentCarryObject do
-        if propData.blockVehicle then
+        if carryData.blockVehicle then
             if DoesEntityExist(GetVehiclePedIsTryingToEnter(cache.ped)) then
                 ClearPedTasks(cache.ped)
             end
@@ -97,8 +97,8 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, propData, _unu
 
         end
 
-        if not IsEntityPlayingAnim(cache.ped, propData.dictionary, propData.animation, 3) and not LocalPlayer.state.isdead and not LocalPlayer.state.isDead then ---@todo may need to add dead checks and other things here as well
-            TaskPlayAnim(cache.ped, propData.dictionary, propData.animation, 2.0, 2.0, -1, propData.flag, 0, false, false, false)
+        if not IsEntityPlayingAnim(cache.ped, carryData.anim.dict, carryData.anim.clip, 3) and not LocalPlayer.state.isdead and not LocalPlayer.state.isDead then
+            TaskPlayAnim(cache.ped, carryData.anim.dict, carryData.anim.clip, 2.0, 2.0, -1, carryData.anim.flag, 0, false, false, false)
         end
 
         Wait(100)
