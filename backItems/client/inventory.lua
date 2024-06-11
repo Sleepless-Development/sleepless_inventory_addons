@@ -72,6 +72,11 @@ lib.onCache('ped', RefreshBackItems)
 
 lib.onCache('vehicle', function(vehicle)
     local toggle = vehicle ~= false
+    
+    if toggle and Config.allowedVehicleClasses[GetVehicleClass(vehicle)] then
+        return
+    end
+
     PlayerState:set('hideAllBackItems', toggle, true)
     UpdateBackItems()
 end)

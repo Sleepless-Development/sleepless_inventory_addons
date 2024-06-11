@@ -39,12 +39,20 @@ Config.defaultSlots = {
     -- },
 }
 
+--- these vehicle classes will be allowed to display all attached back items
+Config.allowedVehicleClasses = {
+    [8] = true,  -- motorcycles
+    [13] = true, -- bicycles
+    [14] = true, -- boats
+}
+
 --- Back items configuration
 ---@type table<string, BackItem>
 Config.BackItems = {
     ['WEAPON_CARBINERIFLE'] = {
         prio = 3,
-        group = 'back'
+        group = 'back',
+        visibility = 1
     },
     ['WEAPON_SNIPERRIFLE'] = {
         prio = 3,
