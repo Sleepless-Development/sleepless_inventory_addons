@@ -7,61 +7,52 @@ SetFlashLightKeepOnWhileMoving(true)
 
 local Players = {}
 
-local function deleteBackItemsForPlayer(playerId)
-    if not Players[playerId] then return end
+local function deleteBackItemsForPlayer(serverId)
+    if not serverId or not Players[serverId] then return end
 
-    for i = 1, #Players[playerId] do
-        local backItem = Players[playerId][i]
+    for i = 1, #Players[serverId] do
+        local backItem = Players[serverId][i]
 
         if backItem then
             backItem:destroy()
-            Players[playerId][i] = nil
         end
     end
+
+    table.wipe(Players[serverId])
 end
 
-local function removePlayerFromList(playerId)
-    if not playerId or not Players[playerId] then return end
-
-    deleteBackItemsForPlayer(playerId)
-    Players[playerId] = {}
-end
-
-local function createBackItemsForPlayer(playerId, backItems)
+local function createBackItemsForPlayer(serverId, backItems)
     for i = 1, #backItems do
         local itemData = backItems[i]
         if itemData.isWeapon then
-            Players[playerId][#Players[playerId] + 1] = CBackWeapon:new(playerId, itemData)
+            Players[serverId][#Players[serverId] + 1] = CBackWeapon:new(serverId, itemData)
         else
-            Players[playerId][#Players[playerId] + 1] = CBackItem:new(playerId, itemData)
+            Players[serverId][#Players[serverId] + 1] = CBackItem:new(serverId, itemData)
         end
     end
 end
 
 local function refreshBackItemsLocal()
-    local playerId = cache.playerId
-    if Players[playerId] then
-        deleteBackItemsForPlayer(playerId)
-
-        Players[playerId] = {}
+    local serverId = cache.serverId
+    if Players[serverId] then
+        deleteBackItemsForPlayer(serverId)
 
         local Items = Utils.formatCachedInventory(InvCache)
 
-        createBackItemsForPlayer(playerId, Items)
+        createBackItemsForPlayer(serverId, Items)
     end
 end
 
 function RefreshBackItems()
+    if not Players[cache.serverId] then
+        Players[cache.serverId] = {}
+    end
     if PlayerState.backItems and next(PlayerState.backItems) then
         PlayerState:set('backItems', false, true)
 
         UpdateBackItems()
     end
 end
-
-RegisterCommand('testBucket', function()
-    PlayerState:set("bucket", 0)
-end)
 
 AddStateBagChangeHandler('bucket', ('player:%s'):format(cache.serverId), function(_, _, value)
     if value == 0 then
@@ -87,9 +78,10 @@ AddStateBagChangeHandler('backItems', nil, function(bagName, _, backItems, _, re
     end
 
     local playerId = GetPlayerFromStateBagName(bagName)
+    local serverId = GetPlayerServerId(playerId)
 
     if not backItems then
-        return removePlayerFromList(playerId)
+        return deleteBackItemsForPlayer(serverId)
     end
 
     local plyPed = playerId == cache.playerId and cache.ped or lib.waitFor(function()
@@ -99,20 +91,18 @@ AddStateBagChangeHandler('backItems', nil, function(bagName, _, backItems, _, re
 
     if not plyPed or plyPed == 0 then return end
 
-    deleteBackItemsForPlayer(playerId)
-
-    Players[playerId] = {}
+    deleteBackItemsForPlayer(serverId)
 
     if next(backItems) then
-        createBackItemsForPlayer(playerId, backItems)
+        createBackItemsForPlayer(serverId, backItems)
     end
 end)
 
 AddEventHandler('onResourceStop', function(resource)
     if resource == GetCurrentResourceName() then
-        for playerId, backItems in pairs(Players) do
+        for serverId, backItems in pairs(Players) do
             if backItems then
-                deleteBackItemsForPlayer(playerId)
+                deleteBackItemsForPlayer(serverId)
             end
         end
     end
@@ -123,11 +113,35 @@ CreateThread(function()
     local NetworkIsPlayerActive = NetworkIsPlayerActive
 
     while true do
-        for playerId, weapons in pairs(Players) do
-            if weapons and next(weapons) and not NetworkIsPlayerActive(playerId) then
-                removePlayerFromList(playerId)
+        for serverId, weapons in pairs(Players) do
+            if weapons and next(weapons) and not NetworkIsPlayerActive(GetPlayerFromServerId(serverId)) then
+                deleteBackItemsForPlayer(serverId)
             end
         end
         Wait(1000)
     end
 end)
+
+
+CreateThread(function()
+    while true do
+        Wait(1000)
+        for serverId, backItems in pairs(Players) do
+            for i = 1, #backItems do
+                local backItem = backItems[i]
+                if backItem then
+                    local targetPed = GetPlayerPed(GetPlayerFromServerId(serverId))
+                    if targetPed and DoesEntityExist(targetPed) then
+                        if not IsEntityAttachedToEntity(backItem.object, targetPed) then
+                            backItem:attach()
+                        end
+                    else
+                        deleteBackItemsForPlayer(serverId)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+RegisterNetEvent('backItems:clearPlayerItems', deleteBackItemsForPlayer)

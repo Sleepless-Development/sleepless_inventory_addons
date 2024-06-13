@@ -1,5 +1,6 @@
 AddEventHandler("playerDropped", function()
     Player(source).state:set('backItems', false, true)
+    TriggerClientEvent('backItems:clearPlayerItems', -1, source)
 end)
 
 AddEventHandler('playerJoining', function(source)

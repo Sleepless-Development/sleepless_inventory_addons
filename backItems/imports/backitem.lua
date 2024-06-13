@@ -16,20 +16,20 @@ local Utils = require 'backItems.imports.utils'
 --- @field flashlight boolean
 
 --- @class CBackItem: OxClass
---- @field playerId number
+--- @field serverId number
 --- @field object number | nil
 --- @field itemData ItemData
 --- @field private table
---- @field new fun(self: self, playerId: number, itemData: ItemData)
---- @field constructor fun(self: self, playerId: number, itemData: ItemData)
+--- @field new fun(self: self, serverId: number, itemData: ItemData)
+--- @field constructor fun(self: self, serverId: number, itemData: ItemData)
 --- @field create fun(self: self, model?: number)
 --- @field attach fun(self: self)
 --- @field destroy fun(self: self)
 --- @field setVisible fun(self: self, toggle: boolean)
 local BackItem = lib.class('BackItem')
 
-function BackItem:constructor(playerId, itemData)
-    self.private.playerId = playerId
+function BackItem:constructor(serverId, itemData)
+    self.private.serverId = serverId
     self.itemData = itemData
 
     pcall(lib.requestModel, itemData.model, 10000)
@@ -42,7 +42,7 @@ function BackItem:constructor(playerId, itemData)
 end
 
 function BackItem:attach()
-    local ped = GetPlayerPed(self.private.playerId)
+    local ped = GetPlayerPed(GetPlayerFromServerId(self.private.serverId))
     local item = self.itemData
     local object = self.object
     local customPos = item.customPos
