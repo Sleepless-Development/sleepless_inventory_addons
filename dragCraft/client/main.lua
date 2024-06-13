@@ -30,7 +30,7 @@ RegisterNetEvent('dragCraft:Craft', function(duration, index)
         },
     })
 
-    TriggerServerEvent('dragCraft:success', result, recipe)
+    TriggerServerEvent('dragCraft:success', result, index)
 
     if result then
         if recipe.client?.after then

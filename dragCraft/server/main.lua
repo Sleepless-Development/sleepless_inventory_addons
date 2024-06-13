@@ -119,10 +119,13 @@ local function processCraftItem(source, craftItem)
 end
 
 ---@param success boolean
----@param recipe CraftRecipe
-RegisterNetEvent('dragCraft:success', function(success, recipe)
+---@param index string
+RegisterNetEvent('dragCraft:success', function(success, index)
     local source = source --[[@as number]]
+    local recipe = RECIPES[index]
+
     local queuedCraft = CraftQueue[source]
+
     if not queuedCraft then return end
 
     if success then
@@ -134,8 +137,8 @@ RegisterNetEvent('dragCraft:success', function(success, recipe)
             ox_inventory:AddItem(source, resultData.name, resultData.amount)
         end
 
-        if recipe.server?.after then
-            recipe.server?.after(recipe)
+        if recipe.server.after then
+            recipe.server.after(recipe)
         end
     end
 
