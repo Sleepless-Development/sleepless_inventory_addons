@@ -108,37 +108,20 @@ AddEventHandler('onResourceStop', function(resource)
     end
 end)
 
-
-CreateThread(function()
-    local NetworkIsPlayerActive = NetworkIsPlayerActive
-
-    while true do
-        for serverId, weapons in pairs(Players) do
-            if weapons and next(weapons) and not NetworkIsPlayerActive(GetPlayerFromServerId(serverId)) then
-                deleteBackItemsForPlayer(serverId)
-            end
-        end
-        Wait(1000)
-    end
-end)
-
-
 CreateThread(function()
     while true do
         Wait(1000)
         for serverId, backItems in pairs(Players) do
-            for i = 1, #backItems do
-                local backItem = backItems[i]
-                if backItem then
-                    local targetPed = GetPlayerPed(GetPlayerFromServerId(serverId))
-                    if targetPed and DoesEntityExist(targetPed) then
-                        if not IsEntityAttachedToEntity(backItem.object, targetPed) then
-                            backItem:attach()
-                        end
-                    else
-                        deleteBackItemsForPlayer(serverId)
+            local targetPed = GetPlayerPed(GetPlayerFromServerId(serverId))
+            if targetPed and DoesEntityExist(targetPed) then
+                for i = 1, #backItems do
+                    local backItem = backItems[i]
+                    if backItem and not IsEntityAttachedToEntity(backItem.object, targetPed) then
+                        backItem:attach()
                     end
                 end
+            else
+                deleteBackItemsForPlayer(serverId)
             end
         end
     end
