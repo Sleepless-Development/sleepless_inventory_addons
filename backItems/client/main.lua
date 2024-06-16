@@ -80,6 +80,10 @@ AddStateBagChangeHandler('backItems', nil, function(bagName, _, backItems, _, re
     local playerId = GetPlayerFromStateBagName(bagName)
     local serverId = GetPlayerServerId(playerId)
 
+    if not Players[serverId] then
+        Players[serverId] = {}
+    end
+
     if not backItems then
         return deleteBackItemsForPlayer(serverId)
     end
@@ -127,4 +131,7 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('backItems:clearPlayerItems', deleteBackItemsForPlayer)
+RegisterNetEvent('backItems:clearPlayerItems', function (serverId)
+    deleteBackItemsForPlayer(serverId)
+    Players[serverId] = nil
+end)
