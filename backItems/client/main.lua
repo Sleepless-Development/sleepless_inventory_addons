@@ -116,8 +116,9 @@ CreateThread(function()
     while true do
         Wait(1000)
         for serverId, backItems in pairs(Players) do
-            local targetPed = GetPlayerPed(GetPlayerFromServerId(serverId))
-            if targetPed and DoesEntityExist(targetPed) then
+            local player = GetPlayerFromServerId(serverId)
+            local targetPed = GetPlayerPed(player)
+            if player > 0 and targetPed and DoesEntityExist(targetPed) then
                 for i = 1, #backItems do
                     local backItem = backItems[i]
                     if backItem and not IsEntityAttachedToEntity(backItem.object, targetPed) then
@@ -131,7 +132,7 @@ CreateThread(function()
     end
 end)
 
-RegisterNetEvent('backItems:clearPlayerItems', function (serverId)
+RegisterNetEvent('backItems:clearPlayerItems', function(serverId)
     deleteBackItemsForPlayer(serverId)
     Players[serverId] = nil
 end)

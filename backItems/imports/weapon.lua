@@ -3,8 +3,8 @@ local Utils = require 'backItems.imports.utils'
 local ox_items = exports.ox_inventory:Items()
 
 --- @class CBackWeapon : CBackItem
---- @field new fun(self: self, playerId: number, itemData: ItemData
---- @field constructor fun(self: self, playerId: number, itemData: ItemData)
+--- @field new fun(self: self, serverId: number, itemData: ItemData
+--- @field constructor fun(self: self, serverId: number, itemData: ItemData)
 --- @field create fun(self: self, model?: number)
 --- @field getComponents fun(self: self, model?: number)
 --- @field attachComponents fun(self: self)
@@ -15,8 +15,8 @@ local ox_items = exports.ox_inventory:Items()
 --- @field weaponComponents table<string | number>
 local BackWeapon = lib.class('BackWeapon', CBackItem)
 
-function BackWeapon:constructor(playerId, itemData)
-    self:super(playerId, itemData)
+function BackWeapon:constructor(serverId, itemData)
+    self:super(serverId, itemData)
 
     if itemData.model then return end
 
