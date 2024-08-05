@@ -23,11 +23,15 @@ end
 
 local function createBackItemsForPlayer(serverId, backItems)
     for i = 1, #backItems do
-        local itemData = backItems[i]
-        if itemData.isWeapon then
-            Players[serverId][#Players[serverId] + 1] = CBackWeapon:new(serverId, itemData)
-        else
-            Players[serverId][#Players[serverId] + 1] = CBackItem:new(serverId, itemData)
+        local itemData = backItems[i];
+        local itemCount = exports.ox_inventory:GetItemCount(itemData.name);
+
+        if itemCount and itemCount > 0 then
+            if itemData.isWeapon then
+                Players[serverId][#Players[serverId] + 1] = CBackWeapon:new(serverId, itemData)
+            else
+                Players[serverId][#Players[serverId] + 1] = CBackItem:new(serverId, itemData)
+            end
         end
     end
 end
