@@ -42,11 +42,7 @@ function BackItem:constructor(serverId, itemData)
 end
 
 function BackItem:attach()
-    local player = GetPlayerFromServerId(self.private.serverId)
-
-    if player < 0 then return end
-
-    local ped = GetPlayerPed(player)
+    local ped = GetPlayerPed(GetPlayerFromServerId(self.private.serverId))
     local item = self.itemData
     local object = self.object
     local customPos = item.customPos

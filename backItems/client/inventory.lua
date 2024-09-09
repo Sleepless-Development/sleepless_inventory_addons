@@ -26,7 +26,6 @@ AddEventHandler('ox_inventory:updateInventory', function(changes)
 
     local needsUpdate = false
 
-
     for slot, change in pairs(changes) do
         if not needsUpdate then
             needsUpdate = shouldUpdate(slot, change)
@@ -81,19 +80,11 @@ lib.onCache('vehicle', function(vehicle)
     UpdateBackItems()
 end)
 
-local function load()
-    Wait(100)
-    InvCache = exports.ox_inventory:GetPlayerItems()
-    CurrentWeapon = exports.ox_inventory:getCurrentWeapon()
-    RefreshBackItems()
-end
-
 AddEventHandler('onResourceStart', function(resource)
     if resource == GetCurrentResourceName() then
-        load()
+        Wait(100)
+        InvCache = exports.ox_inventory:GetPlayerItems()
+        CurrentWeapon = exports.ox_inventory:getCurrentWeapon()
+        RefreshBackItems()
     end
 end)
-
-AddEventHandler('esx:playerLoaded', load)
-
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', load)
