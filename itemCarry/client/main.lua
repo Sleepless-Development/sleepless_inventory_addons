@@ -6,6 +6,8 @@ exports('isCarryingObject', function()
     return isCarrying
 end)
 local function onLoad()
+    Wait(1500)
+
     LocalPlayer.state:set('carryItem', nil, true);
 
     local playerItems = exports.ox_inventory:GetPlayerItems();
@@ -41,6 +43,8 @@ AddEventHandler('onResourceStart', function(resourceName)
 end)
 
 AddStateBagChangeHandler('carryItem', nil, function(bagName, key, carryItem, _unused, replicated)
+    if replicated then return end
+
     local playerIdx = GetPlayerFromStateBagName(bagName);
 
     if playerIdx == 0 or playerIdx == -1 then

@@ -178,8 +178,8 @@ Config.BackItems = {
         prio = 1,
         group = 'back',
         customPos = {
-            pos = { x = 0.4, y = -0.15 },
-            rot = { y = 270.0 }
+            pos = { x = -0.1, y = -0.15 },
+            rot = { y = -270.0 }
         }
     },
 

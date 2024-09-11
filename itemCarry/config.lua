@@ -124,6 +124,24 @@ local config = {
             },
         },
     },
+
+    ['gopostal_package'] = {
+        walkOnly = true,
+        blockVehicle = true,
+        anim = {
+            dict = 'anim@heists@box_carry@',
+            clip = 'idle',
+            flag = 51
+        },
+        prop = {
+            bone = 60309,
+            model = `bzzz_prop_custom_box_2a`,
+            placement = {
+                pos = vector3(0.025000, 0.080000, 0.255000),
+                rot = vector3(110.000000, 175.000000, 135.000000),
+            },
+        },
+    },
 }
 
 return config
