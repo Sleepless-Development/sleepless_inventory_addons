@@ -21,8 +21,8 @@
 
 ---@type table<string, CraftRecipe>
 local RECIPES = {
-    ['garbage scrapmetal'] = {
-        duration = 2000,
+    ['driedweed rolling_paper'] = {
+        duration = 10000,
         client = {
             before = function(recipeData)
                 -- some client logic to run before crafting
@@ -46,15 +46,131 @@ local RECIPES = {
             end,
         },
         costs = {
-            ['garbage'] = { need = 1, remove = true },
-            ['scrapmetal'] = { need = 0.1, remove = true },
+            ['driedweed'] = { need = 1, remove = true },
+            ['rolling_paper'] = { need = 2, remove = true },
         },
         result = {
-            { name = 'lockpick', amount = 1 },
-            -- { name = 'something', amount = 1 }
+            { name = 'joint', amount = 2 },
         },
+
     },
-    -- Additional recipes can be added here
+
+    ['coke_brick scale'] = {
+        duration = 10000,
+        client = {
+            before = function(recipeData)
+
+            end,
+            after = function(recipeData)
+
+            end,
+        },
+        server = {
+            before = function(recipeData)
+
+            end,
+            after = function(recipeData)
+
+            end,
+        },
+        costs = {
+            ['coke_brick'] = { need = 1, remove = true },
+            ['scale'] = { need = 1, remove = false },
+            
+        },
+        result = {
+            { name = 'coke_powder', amount = 8 },
+        },
+
+    },
+
+    ['coke_powder emptybag'] = {
+        duration = 5000,
+        client = {
+            before = function(recipeData)
+
+            end,
+            after = function(recipeData)
+
+            end,
+        },
+        server = {
+            before = function(recipeData)
+
+            end,
+            after = function(recipeData)
+
+            end,
+        },
+        costs = {
+            ['coke_powder'] = { need = 5, remove = true },
+            ['emptybag'] = { need = 5, remove = true },
+            
+        },
+        result = {
+            { name = 'coke_pooch', amount = 5 },
+        },
+
+    },
+   
+
+    ['meth_brick scale'] = {
+        duration = 10000,
+        client = {
+            before = function(recipeData)
+
+            end,
+            after = function(recipeData)
+
+            end,
+        },
+        server = {
+            before = function(recipeData)
+
+            end,
+            after = function(recipeData)
+
+            end,
+        },
+        costs = {
+            ['meth_brick'] = { need = 1, remove = true },
+            ['scale'] = { need = 1, remove = false },
+        },
+        result = {
+            { name = 'meth_powder', amount = 8 },
+        },
+
+    },
+
+    ['meth_powder emptybag'] = {
+        duration = 5000,
+        client = {
+            before = function(recipeData)
+
+            end,
+            after = function(recipeData)
+
+            end,
+        },
+        server = {
+            before = function(recipeData)
+
+            end,
+            after = function(recipeData)
+
+            end,
+        },
+        costs = {
+            ['emptybag'] = { need = 5, remove = true },
+            ['meth_powder'] = { need = 5, remove = true },
+            
+        },
+        result = {
+            { name = 'meth_pooch', amount = 5 },
+        },
+
+    },
+
 }
 
 return RECIPES

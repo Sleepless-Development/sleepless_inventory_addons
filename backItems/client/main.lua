@@ -21,13 +21,18 @@ local function deleteBackItemsForPlayer(serverId)
     table.wipe(Players[serverId])
 end
 
+local Inventory = exports.ox_inventory;
 local function createBackItemsForPlayer(serverId, backItems)
     for i = 1, #backItems do
-        local itemData = backItems[i]
-        if itemData.isWeapon then
-            Players[serverId][#Players[serverId] + 1] = CBackWeapon:new(serverId, itemData)
-        else
-            Players[serverId][#Players[serverId] + 1] = CBackItem:new(serverId, itemData)
+        local itemData = backItems[i];
+        local itemCount = Inventory:GetItemCount(itemData.name);
+
+        if itemCount and itemCount > 0 then
+            if itemData.isWeapon then
+                Players[serverId][#Players[serverId] + 1] = CBackWeapon:new(serverId, itemData)
+            else
+                Players[serverId][#Players[serverId] + 1] = CBackItem:new(serverId, itemData)
+            end
         end
     end
 end
@@ -113,12 +118,13 @@ AddEventHandler('onResourceStop', function(resource)
 end)
 
 CreateThread(function()
+    while not LocalPlayer.state.isLoggedIn do Wait(100) end
+
     while true do
         Wait(1000)
         for serverId, backItems in pairs(Players) do
-            local player = GetPlayerFromServerId(serverId)
-            local targetPed = GetPlayerPed(player)
-            if player > 0 and targetPed and DoesEntityExist(targetPed) then
+            local targetPed = GetPlayerPed(GetPlayerFromServerId(serverId))
+            if targetPed and DoesEntityExist(targetPed) then
                 for i = 1, #backItems do
                     local backItem = backItems[i]
                     if backItem and not IsEntityAttachedToEntity(backItem.object, targetPed) then
