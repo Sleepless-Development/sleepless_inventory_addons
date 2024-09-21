@@ -29,11 +29,24 @@ ox_inventory:registerHook('createItem', function(payload)
 end, {})
 
 ox_inventory:registerHook('swapItems', function(payload)
-    if payload.toInventory ~= payload.fromInventory and payload.toInventory == payload.source then
-        local item = payload.fromSlot
-        local carryData = CARRY_ITEMS[item.name]
+    if payload.toInventory ~= payload.fromInventory then
+        local isCarryItem = false
 
-        if carryData then
+        if payload.toInventory == payload.source then
+            local item = payload.fromSlot
+
+            if item?.name and CARRY_ITEMS[item.name] then
+                isCarryItem = true
+            end
+        elseif payload.fromInventory == payload.source then
+            local item = payload.toSlot
+
+            if item?.name and CARRY_ITEMS[item.name] then
+                isCarryItem = true
+            end
+        end
+
+        if isCarryItem then
             local plyState = Player(payload.source).state
 
             if plyState.carryItem then
@@ -47,3 +60,33 @@ ox_inventory:registerHook('swapItems', function(payload)
         end
     end
 end, {})
+
+local function findCarryItem(source)
+    local playerState = Player(source).state
+    playerState:set("carryItem", nil, true)
+    
+    local playerItems = exports.ox_inventory:GetInventoryItems(source)
+
+    if not playerItems then return end
+
+    for _, itemData in pairs(playerItems) do
+        if itemData and CARRY_ITEMS[itemData.name] then
+            playerState:set("carryItem", itemData.name, true)
+            return
+        end
+    end
+end
+
+CreateThread(function()
+    Wait(500)
+    for _, serverId in ipairs(GetPlayers()) do
+        findCarryItem(tonumber(serverId))
+    end
+end)
+
+
+RegisterNetEvent("carryItem:updateCarryItem", function(item, amount)
+    local plyState = Player(source).state
+
+    plyState:set("carryItem", (amount > 0 and item) or nil, true)
+end)

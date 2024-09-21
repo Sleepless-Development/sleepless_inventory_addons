@@ -1,6 +1,5 @@
 local config = {
-    ['oxy_package'] = {
-        walkOnly = true,
+    ['box'] = {
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -16,9 +15,8 @@ local config = {
             },
         },
     },
-
-    ['wheel'] = {
-        walkOnly = true,
+    ['tv'] = {
+        walkOnly = false,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -27,16 +25,15 @@ local config = {
         },
         prop = {
             bone = 60309,
-            model = `prop_wheel_01`,
+            model = `prop_tv_06`,
             placement = {
-                pos = vector3(0.025000, 0.080000, 0.255000),
-                rot = vector3(-145.000000, 290.000000, 0.000000),
+                pos = vector3(0.115, 0.33000, 0.26),
+                rot = vector3(-130.0, 114.0, 2.0),
             },
         },
     },
-
-    ['house_tv'] = {
-        walkOnly = true,
+    ['big_tv'] = {
+        walkOnly = false,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -45,16 +42,14 @@ local config = {
         },
         prop = {
             bone = 60309,
-            model = `prop_tv_flat_03`,
+            model = `prop_tv_flat_01`,
             placement = {
-                pos = vector3(0.025000, 0.080000, 0.255000),
-                rot = vector3(-120.000000, 100.000000, 10.000000),
+                pos = vector3(-0.015, 0.21, 0.325),
+                rot = vector3(-126.0, 107.0, 6.0),
             },
         },
     },
-
-    ['house_toaster'] = {
-        walkOnly = true,
+    ['boombox'] = {
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -63,16 +58,14 @@ local config = {
         },
         prop = {
             bone = 60309,
-            model = `prop_toaster_01`,
+            model = `prop_boombox_01`,
             placement = {
-                pos = vector3(0.025000, 0.080000, 0.255000),
-                rot = vector3(-50.000000, 290.000000, 0.000000),
+                pos = vector3(-0.04, 0.12, 0.28),
+                rot = vector3(-142.0, 112.0, 6.0),
             },
         },
     },
-
-    ['house_washer'] = {
-        walkOnly = true,
+    ['microwave'] = {
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -81,16 +74,14 @@ local config = {
         },
         prop = {
             bone = 60309,
-            model = `prop_washer_01`,
+            model = `prop_microwave_1`,
             placement = {
-                pos = vector3(0.1000, 0.010000, 0.25000),
-                rot = vector3(-110.000000, 100.000000, 5.000000),
+                pos = vector3(0.14, -0.005, 0.26),
+                rot = vector3(-132.00, 111.0, 0.0),
             },
         },
     },
-
-    ['house_lamp'] = {
-        walkOnly = true,
+    ['golfclubs'] = {
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -99,16 +90,14 @@ local config = {
         },
         prop = {
             bone = 60309,
-            model = `v_res_m_lamptbl_off`,
+            model = `prop_golf_bag_01b`,
             placement = {
-                pos = vector3(0.025000, 0.080000, 0.255000),
-                rot = vector3(-120.000000, 100.000000, 10.000000),
+                pos = vector3(-0.135, 0.22, 0.36),
+                rot = vector3(-68.0, -14.0, 35.0),
             },
         },
     },
-
-    ['house_box'] = {
-        walkOnly = true,
+    ['house_art'] = {
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -117,16 +106,14 @@ local config = {
         },
         prop = {
             bone = 60309,
-            model = `m23_1_prop_m31_roostercrate_02a`,
+            model = `h4_prop_h4_painting_01e`,
             placement = {
-                pos = vector3(0.025000, 0.080000, 0.255000),
-                rot = vector3(-100.000000, 100.000000, 10.000000),
+                pos = vector3(0.12, -0.025, 0.275),
+                rot = vector3(44.0, -77.0, 168.0),
             },
         },
     },
-
-    ['gopostal_package'] = {
-        walkOnly = true,
+    ['pc'] = {
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -135,10 +122,10 @@ local config = {
         },
         prop = {
             bone = 60309,
-            model = `bzzz_prop_custom_box_2a`,
+            model = `prop_dyn_pc_02`,
             placement = {
-                pos = vector3(0.025000, 0.080000, 0.255000),
-                rot = vector3(110.000000, 175.000000, 135.000000),
+                pos = vector3(-0.04, 0.16, 0.26),
+                rot = vector3(44.0, -77.0, 168.0),
             },
         },
     },
