@@ -21,18 +21,13 @@ local function deleteBackItemsForPlayer(serverId)
     table.wipe(Players[serverId])
 end
 
-local Inventory = exports.ox_inventory;
 local function createBackItemsForPlayer(serverId, backItems)
     for i = 1, #backItems do
-        local itemData = backItems[i];
-        local itemCount = Inventory:GetItemCount(itemData.name);
-
-        if itemCount and itemCount > 0 then
-            if itemData.isWeapon then
-                Players[serverId][#Players[serverId] + 1] = CBackWeapon:new(serverId, itemData)
-            else
-                Players[serverId][#Players[serverId] + 1] = CBackItem:new(serverId, itemData)
-            end
+        local itemData = backItems[i]
+        if itemData.isWeapon then
+            Players[serverId][#Players[serverId] + 1] = CBackWeapon:new(serverId, itemData)
+        else
+            Players[serverId][#Players[serverId] + 1] = CBackItem:new(serverId, itemData)
         end
     end
 end
@@ -93,10 +88,18 @@ AddStateBagChangeHandler('backItems', nil, function(bagName, _, backItems, _, re
         return deleteBackItemsForPlayer(serverId)
     end
 
-    local plyPed = playerId == cache.playerId and cache.ped or lib.waitFor(function()
-        local ped = GetPlayerPed(playerId)
-        if ped > 0 then return ped end
-    end, ('%s Player didnt exsist in time! (%s)'):format(playerId, bagName), 10000)
+    local plyPed = playerId == cache.playerId and cache.ped
+
+    if not plyPed then
+        local _, resp = pcall(function ()
+            return lib.waitFor(function()
+                local ped = GetPlayerPed(playerId)
+                if ped > 0 then return ped end
+            end, ('%s Player didnt exsist in time! (%s)'):format(playerId, bagName), 10000)
+        end)
+        plyPed = resp
+    end
+
 
     if not plyPed or plyPed == 0 then return end
 
@@ -118,13 +121,12 @@ AddEventHandler('onResourceStop', function(resource)
 end)
 
 CreateThread(function()
-    while not LocalPlayer.state.isLoggedIn do Wait(100) end
-
     while true do
         Wait(1000)
         for serverId, backItems in pairs(Players) do
-            local targetPed = GetPlayerPed(GetPlayerFromServerId(serverId))
-            if targetPed and DoesEntityExist(targetPed) then
+            local player = GetPlayerFromServerId(serverId)
+            local targetPed = GetPlayerPed(player)
+            if player > 0 and targetPed and DoesEntityExist(targetPed) then
                 for i = 1, #backItems do
                     local backItem = backItems[i]
                     if backItem and not IsEntityAttachedToEntity(backItem.object, targetPed) then
