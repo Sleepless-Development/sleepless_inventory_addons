@@ -35,13 +35,13 @@ ox_inventory:registerHook('swapItems', function(payload)
         if payload.toInventory == payload.source then
             local item = payload.fromSlot
 
-            if item?.name and CARRY_ITEMS[item.name] then
+            if type(item) == 'table' and CARRY_ITEMS[item.name] then
                 isCarryItem = true
             end
         elseif payload.fromInventory == payload.source then
             local item = payload.toSlot
 
-            if item?.name and CARRY_ITEMS[item.name] then
+            if type(item) == 'table' and CARRY_ITEMS[item.name] then
                 isCarryItem = true
             end
         end
@@ -64,7 +64,7 @@ end, {})
 local function findCarryItem(source)
     local playerState = Player(source).state
     playerState:set("carryItem", nil, true)
-    
+
     local playerItems = exports.ox_inventory:GetInventoryItems(source)
 
     if not playerItems then return end
