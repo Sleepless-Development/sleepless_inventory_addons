@@ -13,7 +13,9 @@
 
 ---@class ItemResult
 ---@field name string The name of the item.
----@field amount number The amount of the item produced.
+---@field amount? number The amount of the item produced.
+---@field min? number The minimum amount of the item produced when you want a random amount.
+---@field max? number The maximum amount of the item produced when you want a random amount.
 
 ---@class CraftCost
 ---@field need number The quantity of the item needed for crafting.

@@ -24,7 +24,6 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
     local toSlot = data.toSlot
 
     if type(fromSlot) == "table" and type(toSlot) == "table" then
-
         if fromSlot.name == toSlot.name then return end
 
         local recipeKey = string.format("%s %s", fromSlot.name, toSlot.name)
@@ -53,9 +52,14 @@ local craftHook = ox_inventory:registerHook('swapItems', function(data)
 
         for i = 1, #recipe.result do
             local resultData = recipe.result[i]
+
+            local amount = (resultData.min and resultData.max and math.random(resultData.min, resultData.max))
+                or resultData.amount
+                or 1
+
             resultForQueue[i] = {
                 name = resultData.name,
-                amount = resultData.amount
+                amount = amount
             }
         end
 
