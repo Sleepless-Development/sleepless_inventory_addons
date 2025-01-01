@@ -1,5 +1,6 @@
 local config = {
     ['box'] = {
+        disableMelee = true,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -17,6 +18,7 @@ local config = {
     },
     ['tv'] = {
         walkOnly = false,
+        disableMelee = true,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -34,6 +36,7 @@ local config = {
     },
     ['big_tv'] = {
         walkOnly = false,
+        disableMelee = true,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -50,6 +53,7 @@ local config = {
         },
     },
     ['boombox'] = {
+        disableMelee = true,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -66,6 +70,7 @@ local config = {
         },
     },
     ['microwave'] = {
+        disableMelee = true,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -82,6 +87,7 @@ local config = {
         },
     },
     ['golfclubs'] = {
+        disableMelee = true,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -98,6 +104,7 @@ local config = {
         },
     },
     ['house_art'] = {
+        disableMelee = true,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',
@@ -114,6 +121,7 @@ local config = {
         },
     },
     ['pc'] = {
+        disableMelee = true,
         blockVehicle = true,
         anim = {
             dict = 'anim@heists@box_carry@',

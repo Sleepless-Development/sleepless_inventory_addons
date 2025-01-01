@@ -71,6 +71,18 @@ AddStateBagChangeHandler("carryItem", nil, function(bagName, key, carryItem, _un
             lib.disableControls:Remove(controls)
         end)
     end
+    
+    if carryData.disableMelee then
+        local controls = {24, 25, 68, 69, 70}
+        lib.disableControls:Add(controls)
+        CreateThread(function()
+            while currentCarryObject do
+                lib.disableControls()
+                Wait(1)
+            end
+            lib.disableControls:Remove(controls)
+        end)
+    end
 
     while currentCarryObject do
         if carryData.blockVehicle then
