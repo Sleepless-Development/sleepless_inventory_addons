@@ -61,6 +61,50 @@ ox_inventory:registerHook('swapItems', function(payload)
     end
 end, {})
 
+exports.ox_inventory:registerHook('swapItems', function(payload)
+    local droppedItem   = payload.fromSlot
+    local carryData     = CARRY_ITEMS[droppedItem.name]
+    local itemCarryDrop = { [droppedItem.name] = { count = droppedItem.count } }
+    
+    if payload.toInventory ~= 'newdrop' or not itemCarryDrop then 
+        return 
+    end
+
+    local item = payload.fromSlot
+    local items = { { item.name, payload.count, item.metadata } }
+    
+    if carryData == nil then 
+        return 
+    end
+    
+    if droppedItem and type(droppedItem) == 'table' then
+        local dropId = exports.ox_inventory:CustomDrop(
+            item.label, 
+            items,
+            GetEntityCoords(GetPlayerPed(payload.source)), 
+            1, 
+            1,  -- weight set to 1 since when removing the item from the custom drop and switch it with a item that has less weight, the prop stays but the item is different
+            nil, 
+            carryData.prop.model
+        )
+        
+        if not dropId then 
+            return 
+        end
+
+        CreateThread(function()
+            exports.ox_inventory:RemoveItem(payload.source, item.name, payload.count, nil, item.slot)
+            Wait(0)
+            exports.ox_inventory:forceOpenInventory(payload.source, 'drop', dropId)
+        end)
+    end
+
+    return false
+end, {
+    itemFilter = itemCarryDrop,
+    typeFilter = { player = true }
+})
+
 local function findCarryItem(source)
     local playerState = Player(source).state
     playerState:set("carryItem", nil, true)
