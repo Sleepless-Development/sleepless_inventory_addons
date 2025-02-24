@@ -61,6 +61,60 @@ ox_inventory:registerHook('swapItems', function(payload)
     end
 end, {})
 
+exports.ox_inventory:registerHook('swapItems', function(payload)
+    local droppedItem   = payload.fromSlot
+    local carryData     = CARRY_ITEMS[droppedItem.name]
+    
+    if not carryData then 
+        return 
+    end
+
+    local item = payload.fromSlot
+    local items = { { item.name, payload.count, item.metadata } }
+    
+    if payload.toInventory == 'newdrop' or string.sub(payload.toInventory, 1, 4) == "drop" then
+        local existingItems = exports.ox_inventory:GetInventoryItems(payload.toInventory)
+        if existingItems and #existingItems > 0 then
+            lib.notify(payload.source, {
+                title = 'Inventory',
+                description = 'You cannot place an item here, as it is already occupied!',
+                type = 'error'
+            })
+            return false
+        end
+    end
+
+    if not (payload.toInventory == 'newdrop' or string.sub(payload.toInventory, 1, 4) == "drop") then
+        return
+    end
+    
+    if droppedItem and type(droppedItem) == 'table' then
+        local dropId = exports.ox_inventory:CustomDrop(
+            item.label, 
+            items,
+            GetEntityCoords(GetPlayerPed(payload.source)), 
+            1, 
+            1, 
+            nil, 
+            carryData.prop.model
+        )
+        
+        if not dropId then 
+            return 
+        end
+
+        CreateThread(function()
+            exports.ox_inventory:RemoveItem(payload.source, item.name, payload.count, nil, item.slot)
+            Wait(0)
+            exports.ox_inventory:forceOpenInventory(payload.source, 'drop', dropId)
+        end)
+    end
+
+    return false
+end, {
+    typeFilter = { player = true }
+})
+
 local function findCarryItem(source)
     local playerState = Player(source).state
     playerState:set("carryItem", nil, true)
