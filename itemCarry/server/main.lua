@@ -64,17 +64,28 @@ end, {})
 exports.ox_inventory:registerHook('swapItems', function(payload)
     local droppedItem   = payload.fromSlot
     local carryData     = CARRY_ITEMS[droppedItem.name]
-    local itemCarryDrop = { [droppedItem.name] = { count = droppedItem.count } }
     
-    if payload.toInventory ~= 'newdrop' or not itemCarryDrop then 
+    if not carryData then 
         return 
     end
 
     local item = payload.fromSlot
     local items = { { item.name, payload.count, item.metadata } }
     
-    if carryData == nil then 
-        return 
+    if payload.toInventory == 'newdrop' or string.sub(payload.toInventory, 1, 4) == "drop" then
+        local existingItems = exports.ox_inventory:GetInventoryItems(payload.toInventory)
+        if existingItems and #existingItems > 0 then
+            lib.notify(payload.source, {
+                title = 'Inventory',
+                description = 'You cannot place an item here, as it is already occupied!',
+                type = 'error'
+            })
+            return false
+        end
+    end
+
+    if not (payload.toInventory == 'newdrop' or string.sub(payload.toInventory, 1, 4) == "drop") then
+        return
     end
     
     if droppedItem and type(droppedItem) == 'table' then
@@ -83,7 +94,7 @@ exports.ox_inventory:registerHook('swapItems', function(payload)
             items,
             GetEntityCoords(GetPlayerPed(payload.source)), 
             1, 
-            1,  -- weight set to 1 since when removing the item from the custom drop and switch it with a item that has less weight, the prop stays but the item is different
+            1, 
             nil, 
             carryData.prop.model
         )
@@ -101,7 +112,6 @@ exports.ox_inventory:registerHook('swapItems', function(payload)
 
     return false
 end, {
-    itemFilter = itemCarryDrop,
     typeFilter = { player = true }
 })
 
