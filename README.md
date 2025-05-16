@@ -7,6 +7,9 @@ Addon Modules for ox_inventory to enhance the utility
 ![](https://img.shields.io/github/contributors/Sleepless-Development/sleepless_inventory_addons?logo=github)
 ![](https://img.shields.io/github/v/release/Sleepless-Development/sleepless_inventory_addons?logo=github)
 
+## 🙏🏻 Credits
+Big Thanks to [Zoo](https://github.com/FjamZoo) from renewed scripts. the Backitems section of this resource relies heavily on code and research he did for [Renewed-Weaponscarry](https://github.com/Renewed-Scripts/Renewed-Weaponscarry).
+
 ## 📃 Documentation
 
 https://sleeplessdevelopment.dev
