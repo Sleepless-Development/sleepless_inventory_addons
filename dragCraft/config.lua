@@ -10,6 +10,7 @@
 ---@class CallbackFunc
 ---@field before fun(recipeData: CraftRecipe):boolean
 ---@field after fun(recipeData: CraftRecipe):boolean
+---@field metadata? fun(resultName: string, fromSlot: table, toSlot: table):table
 
 ---@class ItemResult
 ---@field name string The name of the item.
