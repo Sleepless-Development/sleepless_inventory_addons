@@ -15,7 +15,7 @@ Big Thanks to [Zoo](https://github.com/FjamZoo) from renewed scripts. the Backit
 
 ## 📃 Documentation
 
-https://sleeplessdevelopment.dev
+https://sleeplessdevelopment.dev/docs/inventoryaddons
 
 ## 💾 Download
 
