@@ -1,32 +1,58 @@
 local ox_inventory = exports.ox_inventory
 local CARRY_ITEMS = require 'itemCarry.config'
 
-ox_inventory:registerHook('createItem', function(payload)
-    local carryData = CARRY_ITEMS[payload?.item?.name]
-    local plyid = type(payload.inventoryId) == "number" and payload.inventoryId
+local carryItemFilter = {}
 
-    if not carryData or not plyid then return end
+for itemName in pairs(CARRY_ITEMS) do
+    carryItemFilter[itemName] = true
+end
 
-    local plyState = Player(plyid).state
+local rejectedCarryCreates = setmetatable({}, { __mode = 'k' })
 
-    if plyState.carryItem then
-        lib.notify(plyid, {
-            title = 'Inventory',
-            description = 'You are already carrying something!',
-            type = 'error'
-        })
-        local coords = GetEntityCoords(GetPlayerPed(plyid))
-        CreateThread(function()
-            Wait(300)
-            local success = ox_inventory:RemoveItem(plyid, payload?.item?.name, payload?.count, payload?.metadata)
-            if success then
-                ox_inventory:CustomDrop(payload?.item?.label,
-                    { { payload?.item?.name, payload?.count, payload?.metadata } },
-                    coords, 1, nil, nil, carryData.prop.model)
-            end
-        end)
-    end
-end, {})
+local function rejectIfAlreadyCarrying(payload)
+    local playerId = type(payload.inventoryId) == 'number' and payload.inventoryId
+
+    if not playerId then return end
+    if not Player(playerId).state.carryItem then return end
+
+    rejectedCarryCreates[payload] = playerId
+end
+
+local function dropRejectedCarryItem(success, payload)
+    local playerId = rejectedCarryCreates[payload]
+    rejectedCarryCreates[payload] = nil
+
+    if not success or not playerId then return end
+
+    local item = payload.item
+    local carryData = item and CARRY_ITEMS[item.name]
+
+    if not carryData then return end
+
+    local ped = GetPlayerPed(playerId)
+
+    if ped == 0 then return end
+
+    local removed = ox_inventory:RemoveItem(playerId, item.name, payload.count, payload.metadata)
+
+    if not removed then return end
+
+    lib.notify(playerId, {
+        title = 'Inventory',
+        description = 'You are already carrying something!',
+        type = 'error'
+    })
+
+    ox_inventory:CustomDrop(item.label, {
+        { item.name, payload.count, payload.metadata }
+    }, GetEntityCoords(ped), 1, nil, nil, carryData.prop.model)
+end
+
+local createCarryItemHook = ox_inventory:registerHook('createItem', rejectIfAlreadyCarrying, {
+    itemFilter = carryItemFilter,
+})
+
+AddEventHandler(createCarryItemHook, dropRejectedCarryItem)
 
 ox_inventory:registerHook('swapItems', function(payload)
     if payload.toInventory ~= payload.fromInventory then
